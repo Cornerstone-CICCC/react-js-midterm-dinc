@@ -22,12 +22,22 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-const ProductForm = () => {
+interface ProductFormProps {
+  isEditMode?: boolean;
+  initialData?: ProductFormInputs;
+  onDelete?: () => void;
+}
+
+const ProductForm = ({
+  isEditMode = false,
+  initialData,
+  onDelete,
+}: ProductFormProps) => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const form = useForm<ProductFormInputs>({
     resolver: zodResolver(productSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       title: '',
       description: '',
       price: 0,
@@ -56,13 +66,28 @@ const ProductForm = () => {
     disabled: uploadedImages.length >= MAX_IMAGES,
   });
 
+  const onPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/,/g, '').trim();
+    const numValue = Number(value);
+
+    if (!value || (!isNaN(numValue) && numValue >= 0 && numValue <= 1000000)) {
+      form.setValue('price', numValue);
+    }
+  };
+
+  const formatPrice = (value: number) => {
+    return value.toLocaleString('en-US');
+  };
+
   const onSubmit = (data: ProductFormInputs) => {
     console.log('Submitted Data:', data);
   };
 
   return (
     <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Create Listing</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        {isEditMode ? 'Edit listing' : 'Create listing'}
+      </h1>
 
       {/* Image Previews */}
       <div className="space-y-3">
@@ -72,7 +97,7 @@ const ProductForm = () => {
             {uploadedImages.map((image, index) => (
               <div
                 key={index}
-                className="relative w-40 h-40 border rounded overflow-hidden bg-gray-50"
+                className="relative w-40 h-40 border rounded overflow-hidden bg-gray-300"
               >
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
@@ -137,11 +162,11 @@ const ProductForm = () => {
                 <FormControl>
                   <Input
                     placeholder="Title"
-                    className="h-14 text-2xl"
+                    className="h-14 text-md"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage className="text-base" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -157,11 +182,11 @@ const ProductForm = () => {
                 <FormControl>
                   <Textarea
                     placeholder="Description"
-                    className="resize-none h-40 text-2xl"
+                    className="resize-none h-40 text-md"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage className="text-base" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -178,20 +203,18 @@ const ProductForm = () => {
                       $
                     </span>
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="0"
+                      min="0"
+                      max="1000000"
                       className="pl-10 pr-4 h-14 text-2xl text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === '' || /^\d+$/.test(value)) {
-                          field.onChange(value === '' ? '' : Number(value));
-                        }
-                      }}
+                      value={field.value ? formatPrice(field.value) : ''}
+                      onChange={onPriceChange}
                     />
                   </div>
                 </FormControl>
-                <FormMessage className="text-base" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -211,7 +234,7 @@ const ProductForm = () => {
                         variant={
                           field.value === category ? 'default' : 'outline'
                         }
-                        className="h-14 text-lg"
+                        className="h-14 text-md"
                         onClick={() => field.onChange(category)}
                       >
                         {category}
@@ -219,7 +242,7 @@ const ProductForm = () => {
                     ))}
                   </div>
                 </FormControl>
-                <FormMessage className="text-base" />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -227,6 +250,17 @@ const ProductForm = () => {
           <Button className="w-full p-5 text-lg" type="submit">
             Publish
           </Button>
+
+          {isEditMode && onDelete && (
+            <Button
+              variant="destructive"
+              className="w-full p-5 text-lg"
+              onClick={onDelete}
+              type="button"
+            >
+              Delete
+            </Button>
+          )}
         </form>
       </Form>
     </div>

@@ -2,7 +2,7 @@
 
 import ProductForm from '@/components/work/product-form';
 
-const PostsPage = () => {
+const CreateWorkPage = () => {
   return (
     <div>
       <ProductForm />
@@ -10,4 +10,4 @@ const PostsPage = () => {
   );
 };
 
-export default PostsPage;
+export default CreateWorkPage;
