@@ -1,6 +1,7 @@
 "use client";
 
 import Inputpair from "@/components/payment/Inputpair";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
@@ -17,20 +18,23 @@ const PaymentPage = () => {
         <div className="items-start space-y-5 lg:grid lg:grid-cols-6 lg:space-x-4">
           <div className="col-span-4">
             <div className="border-t-2 border-black">
-              <div className="flex justify-start items-center py-6 border-b-1 gap-6">
-                <div className="py-4 flex gap-4">
-                  <div className="size-6">
-                    <Image src="/globe.svg" alt="" className="object-cover" width={40} height={40}/>
+              <div className="flex flex-col justify-start items-start p-6 border-b-1 space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-full flex items-center space-x-4">
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                      <AvatarFallback>S</AvatarFallback>
+                    </Avatar>
+                    <p className="truncate font-semibold">Seller name</p>
                   </div>
-                  <p>Seller Name</p>
                 </div>
-                <div className="flex justify-start items-center gap-4">
-                  <div>
-                    <Image src="/globe.svg" alt="" className="object-cover" width={50} height={50}/>
+                <div className="flex justify-start items-start gap-4">
+                  <div className="size-30 shrink-0 bg-gray-200 overflow-hidden relative">
+                    <Image src="/tmp.png" alt="" className="object-cover" fill />
                   </div>
-                  <div className="flex flex-col">
-                    <p className="text-lg font-bold truncate">Product title</p>
-                    <span>$140.00</span>
+                  <div className="flex flex-col space-y-2">
+                    <p className="text-md truncate text-muted-foreground">ModernModern Modern Modern Wooden Coffee Table</p>
+                    <span className="font-bold text-lg">$140.00</span>
                   </div>
                 </div>
               </div>
@@ -73,27 +77,31 @@ const PaymentPage = () => {
       </div>
       <div className="p-20">
         <div className="items-start space-y-5 lg:grid lg:grid-cols-6 lg:space-x-4">
-          <div className="col-span-4 px-4">
+          <div className="col-span-4 lg:px-4">
             <div className="border-t-2 border-black">
-              <div className="flex justify-start items-center py-6 border-b-1 gap-6">
-                <div className="py-4 flex gap-4">
-                  <div className="size-6">
-                    <Image src="/globe.svg" alt="" className="object-cover" width={40} height={40}/>
+              <div className="flex flex-col justify-start items-start p-6 border-b-1 space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-full flex items-center space-x-4">
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                      <AvatarFallback>S</AvatarFallback>
+                    </Avatar>
+                    <p className="truncate font-semibold">Seller name</p>
                   </div>
-                  <p>Seller Name</p>
                 </div>
-                <div className="flex justify-start items-center gap-4">
-                  <div>
-                    <Image src="/globe.svg" alt="" className="object-cover" width={50} height={50}/>
+                <div className="flex justify-start items-start gap-4">
+                  <div className="size-30 shrink-0 bg-gray-200 overflow-hidden relative">
+                    <Image src="/tmp.png" alt="" className="object-cover" fill />
                   </div>
-                  <div className="flex flex-col">
-                    <p className="text-lg font-bold truncate">Product title</p>
-                    <span>$140.00</span>
+                  <div className="flex flex-col space-y-2">
+                    <p className="text-md truncate text-muted-foreground">ModernModern Modern Modern Wooden Coffee Table</p>
+                    <span className="font-bold text-lg">$140.00</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="mt-20 pt-5 border-t-2 border-black">
+
+            <div className="mt-10 mb-10 lg:mt-20 pt-5 border-t-2 border-black">
               <form className="space-y-6" onSubmit={handleSubmitPayment}>
                 <div>
                   <h3 className="font-semibold text-md mb-4">Shipping Address</h3>
