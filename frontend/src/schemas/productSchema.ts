@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-export const artworkSchema = z.object({
+export const productSchema = z.object({
   title: z
     .string()
     .nonempty('Title is required')
@@ -17,4 +17,4 @@ export const artworkSchema = z.object({
   category: z.string().nonempty('Category is required'),
 });
 
-export type ArtworkFormInputs = z.infer<typeof artworkSchema>;
+export type ProductFormInputs = z.infer<typeof productSchema>;
