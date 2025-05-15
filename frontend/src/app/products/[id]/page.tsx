@@ -25,7 +25,7 @@ const ProductDetail = () => {
                 src={`/${currentImg}`}
                 alt=""
                 fill
-                className="bg-gray-300/80 object-contain"
+                className="bg-zinc-100 object-contain"
               />
             </div>
             <div className="flex gap-3 justify-end">
@@ -33,7 +33,7 @@ const ProductDetail = () => {
                 <button
                   key={i}
                   className={cn({
-                    'bg-amber-200 size-20 relative border-1 border-white': true,
+                    'bg-zinc-100 size-20 relative border-1 border-white': true,
                     'border-1 border-black': url === currentImg,
                   })}
                   onClick={() => handleImageChange(url)}
@@ -58,7 +58,7 @@ const ProductDetail = () => {
           <div className="text-sm text-muted-foreground">
             Updated 3 days ago
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 mt-8 p-4 bg-zinc-50 rounded-sm">
             <h3 className="text-lg font-bold">Details</h3>
             <div className="text-muted-foreground">
               <p>
@@ -70,7 +70,7 @@ const ProductDetail = () => {
               </p>
             </div>
           </div>
-          <div className="w-full flex items-center space-x-4 mt-8">
+          <div className="w-full flex items-center space-x-4 mt-4 p-4 bg-zinc-50 rounded-sm">
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>S</AvatarFallback>
