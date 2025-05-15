@@ -88,7 +88,6 @@ const SignupForm = ({ signup, loading, setError }: SignupFormProps) => {
           <Button
             type="submit"
             className="w-full"
-            variant="tertiary"
             disabled={loading}
           >
             Sign up

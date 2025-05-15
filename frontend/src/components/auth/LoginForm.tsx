@@ -81,7 +81,7 @@ const LoginForm = ({ login, loading, setError }: LoginFormProps) => {
           )}
         />
 
-        <Button type="submit" className="w-full" variant="tertiary" disabled={loading}>
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? (
             <>
               <span>Signing in</span>
