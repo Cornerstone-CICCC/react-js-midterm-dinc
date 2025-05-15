@@ -10,6 +10,31 @@ import { useState } from 'react';
 
 const imagesList = ['product1.png', 'product2.png', 'product3.png'];
 
+interface IProductItem {
+  id: number;
+  userId: number;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  status: 'available' | 'sold';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const productItem: IProductItem = {
+  id: 1,
+  userId: 1,
+  title: 'Modern Wooden Coffee Table',
+  description:
+    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
+  price: 299,
+  category: 'Home',
+  status: 'available',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 const ProductDetail = () => {
   const [currentImg, setCurrentImg] = useState<string>(imagesList[0]);
   const handleImageChange = (url: string) => {
@@ -50,24 +75,18 @@ const ProductDetail = () => {
           </div>
         </div>
         <div className="lg:w-1/2 space-y-5">
-          <h2 className="text-4xl font-bold">Modern Wooden Coffee Table</h2>
+          <h2 className="text-4xl font-bold">{productItem.title}</h2>
           <div className="flex gap-2">
-            <Badge variant={'outline'}>Home</Badge>
+            <Badge variant={'outline'}>{productItem.category}</Badge>
           </div>
-          <div className="text-2xl font-bold">$ 299.00</div>
+          <div className="text-2xl font-bold">$ {productItem.price}</div>
           <div className="text-sm text-muted-foreground">
             Updated 3 days ago
           </div>
           <div className="space-y-4 mt-8 p-4 bg-zinc-50 rounded-sm">
             <h3 className="text-lg font-bold">Details</h3>
             <div className="text-muted-foreground">
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Accusamus inventore tenetur, provident repellat, omnis
-                perspiciatis, nostrum quidem dolores blanditiis atque delectus
-                accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem,
-                porro.
-              </p>
+              <p>{productItem.description}</p>
             </div>
           </div>
           <div className="w-full flex items-center space-x-4 mt-4 p-4 bg-zinc-50 rounded-sm">
@@ -75,11 +94,23 @@ const ProductDetail = () => {
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>S</AvatarFallback>
             </Avatar>
-            <p className="truncate font-semibold">Seller name</p>
+            <p className="truncate font-semibold">
+              <Link href={`/profile/${productItem.userId}`}>
+                {productItem.userId}
+              </Link>
+            </p>
           </div>
-          <Button className="w-full" size={'lg'} asChild>
-            <Link href="/payment">Purchase</Link>
-          </Button>
+          {productItem.status === 'available' ? (
+            <Button className="w-full" size={'lg'} asChild>
+              <Link href="/payment">
+                <span className="uppercase">Purchase</span>
+              </Link>
+            </Button>
+          ) : (
+            <Button className="w-full" size={'lg'} disabled>
+              <span className="uppercase">Soldout</span>
+            </Button>
+          )}
         </div>
       </div>
     </div>
