@@ -100,6 +100,14 @@ const ProductDetail = () => {
               </Link>
             </p>
           </div>
+
+          {/** below button will be show only when seller and user is same. */}
+          <Button className="w-full" size={'lg'} asChild>
+            <Link href={`/work/1/edit`}>
+              <span className="uppercase">Edit</span>
+            </Link>
+          </Button>
+
           {productItem.status === 'available' ? (
             <Button className="w-full" size={'lg'} asChild>
               <Link href="/payment">
