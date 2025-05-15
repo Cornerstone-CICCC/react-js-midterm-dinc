@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import { IProduct } from '../types/product';
 
 const productSchema = new Schema({
@@ -18,10 +18,23 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
-  category: {
-    type: String,
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
     required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+    index: true,
   },
 });
 
-const User = model<IProduct>('User', productSchema);
+const Product = model<IProduct>('Product', productSchema);
+
+export default Product;
+export { productSchema };
