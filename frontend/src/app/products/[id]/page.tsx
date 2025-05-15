@@ -41,11 +41,11 @@ const ProductDetail = () => {
     setCurrentImg(url);
   };
   return (
-    <div className="p-20">
+    <div className="p-5 md:p-20">
       <div className="flex flex-col gap-10 lg:flex-row">
-        <div className="lg:w-1/2">
+        <div className="">
           <div className="space-y-3">
-            <div className="h-[500px] relative">
+            <div className="h-[400px] w-[400px] md:h-[500px] md:w-[500px] relative mx-auto">
               <Image
                 src={`/${currentImg}`}
                 alt=""
@@ -53,7 +53,7 @@ const ProductDetail = () => {
                 className="bg-zinc-100 object-contain"
               />
             </div>
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-end w-[400px] md:w-[500px] mx-auto">
               {imagesList.map((url, i) => (
                 <button
                   key={i}
@@ -74,7 +74,7 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
-        <div className="lg:w-1/2 space-y-5">
+        <div className=" space-y-5">
           <h2 className="text-4xl font-bold">{productItem.title}</h2>
           <div className="flex gap-2">
             <Badge variant={'outline'}>{productItem.category}</Badge>
