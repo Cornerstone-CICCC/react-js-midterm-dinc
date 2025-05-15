@@ -2,8 +2,19 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const protectedRoutes = ['/posts', '/payment'];
+const protectedRoutes = [
+  '/payment',
+  '/work/new',
+  '/user/edit'
+];
+
 const authRoutes = ['/login', '/signup'];
+
+const isDynamicProtectedRoute = (pathname: string): boolean => {
+  // Add more dynamic routes here
+  const workEditPattern = /^\/work\/[^\/]+\/edit\/?$/;
+  return workEditPattern.test(pathname);
+};
 
 const verifyToken = async (token: string): Promise<boolean> => {
   try {
@@ -24,13 +35,15 @@ const middleware = async (request: NextRequest) => {
     pathname === route || pathname.startsWith(`${route}/`)
   );
 
+  const isDynamicProtected = isDynamicProtectedRoute(pathname);
+
   const isAuthRoute = authRoutes.some(route =>
     pathname === route || pathname.startsWith(`${route}/`)
   );
 
   const isAuthenticated = token ? await verifyToken(token) : false;
 
-  if (isProtectedRoute && !isAuthenticated) {
+  if ((isProtectedRoute || isDynamicProtected) && !isAuthenticated) {
     const url = new URL('/login', request.url);
     url.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(url);
