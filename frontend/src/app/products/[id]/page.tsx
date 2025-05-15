@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { DotIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -16,6 +17,7 @@ interface IProductItem {
   title: string;
   description: string;
   price: number;
+  location: string;
   category: string;
   status: 'available' | 'sold';
   createdAt: Date;
@@ -29,10 +31,11 @@ const productItem: IProductItem = {
   description:
     'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
   price: 299,
+  location: 'Vancouver, BC',
   category: 'Home',
   status: 'available',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: new Date('2025-05-7'),
+  updatedAt: new Date('2025-05-7'),
 };
 
 const ProductDetail = () => {
@@ -40,6 +43,9 @@ const ProductDetail = () => {
   const handleImageChange = (url: string) => {
     setCurrentImg(url);
   };
+  const today = Date.now() / 1000;
+  const diff = productItem.updatedAt.getTime() / 1000;
+
   return (
     <div className="p-5 md:p-20">
       <div className="flex flex-col gap-10 lg:flex-row">
@@ -74,14 +80,20 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
-        <div className=" space-y-5">
+        <div className="space-y-4">
           <h2 className="text-4xl font-bold">{productItem.title}</h2>
           <div className="flex gap-2">
             <Badge variant={'outline'}>{productItem.category}</Badge>
           </div>
-          <div className="text-2xl font-bold">$ {productItem.price}</div>
-          <div className="text-sm text-muted-foreground">
-            Updated 3 days ago
+          <div className="space-y-1">
+            <div className="text-2xl font-bold">$ {productItem.price}</div>
+            <div className="text-sm text-muted-foreground flex items-center">
+              <span>{productItem.location}</span>
+              <DotIcon />
+              <span>
+                Listed {Math.floor((today - diff) / (60 * 60 * 24))} days ago
+              </span>
+            </div>
           </div>
           <div className="space-y-4 mt-8 p-4 bg-zinc-50 rounded-sm">
             <h3 className="text-lg font-bold">Details</h3>
