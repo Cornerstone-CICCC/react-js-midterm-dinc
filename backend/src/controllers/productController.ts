@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import Product from '../models/productModel';
 import mongoose from 'mongoose';
 
-export const getProducts = (
+export const getProducts = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const products = Product.find();
+    const products = await Product.find();
     res.json(products);
   } catch (error) {
     next(error);
@@ -27,7 +27,7 @@ export const getProductList = async (
     // Category
     // Search
 
-    const products = await Product.find({});
+    const products = await Product.find();
     if (products.length === 0) {
       res.status(200).json([]);
     }
@@ -37,7 +37,7 @@ export const getProductList = async (
   }
 };
 
-export const getProdctById = async (
+export const getProductById = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -60,13 +60,14 @@ export const createProduct = async (
   next: NextFunction,
 ) => {
   try {
-    const { name, price, description, imageUrl, category } = req.body;
+    const { name, price, description, imageUrl, categoryId, userId } = req.body;
     const newProduct = new Product({
       name,
       price,
       description,
       imageUrl,
-      category,
+      categoryId,
+      userId,
     });
     await newProduct.save();
     res.status(201).json(newProduct);
@@ -82,10 +83,10 @@ export const updateProduct = async (
 ) => {
   try {
     const productId = req.params.id;
-    const { name, price, description, imageUrl, category } = req.body;
+    const { name, price, description, imageUrl, categoryId } = req.body;
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
-      { name, price, description, imageUrl, category },
+      { name, price, description, imageUrl, categoryId },
       { new: true },
     );
     if (!updatedProduct) {
