@@ -13,8 +13,8 @@ import Link from 'next/link';
 const Header = () => {
   const isLogin = false;
   return (
-    <header className="w-full flex justify-between px-4 py-6 border-b-2 border-black items-center fixed">
-      <h1 className="text-5xl font-bold">
+    <header className="w-full flex justify-between px-4 py-4 border-b-2 border-black items-center fixed">
+      <h1 className="font-bold">
         <Link href="/" className="flex flex-col gap-2">
           <span>DINCT</span>
         </Link>
