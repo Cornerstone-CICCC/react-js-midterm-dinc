@@ -31,7 +31,7 @@ const ImageUpload = ({ className, image, onFileSelect }: ImageUploadProps) => {
   };
 
   return (
-    <div className={cn("flex flex-col gap-2 bg-gray-200 p-4 rounded-2xl", className)}>
+    <div className={cn("flex flex-col gap-2 bg-zinc-200 p-4 rounded-3xl", className)}>
       <div className="flex items-center justify-between">
         <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 transition-colors">
           <Image

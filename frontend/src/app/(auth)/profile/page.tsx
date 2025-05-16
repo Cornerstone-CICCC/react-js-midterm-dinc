@@ -1,7 +1,9 @@
 'use client';
 
 import ProfileUI from '@/components/profile/profile-ui';
+import ProfileSkeleton from '@/components/profile/profile-skeleton';
 import { Product } from '@/types/product';
+import { Suspense } from 'react';
 
 const MyProfilePage = () => {
   // TODO: get user
@@ -10,7 +12,7 @@ const MyProfilePage = () => {
     name: 'John Doe',
     userName: 'johndoe',
     location: 'Vancouver, BC, Canada',
-    bio: 'When I’m not working, you’ll find me [personal hobbies or interests, e.g., exploring new technologies, reading about history, or hiking in nature]. I’m also deeply interested in [your specific interests or causes, e.g., promoting digital accessibility or sustainability].',
+    bio: "When I'm not working, you'll find me [personal hobbies or interests, e.g., exploring new technologies, reading about history, or hiking in nature]. I'm also deeply interested in [your specific interests or causes, e.g., promoting digital accessibility or sustainability].",
     fileId: '1',
     email: 'john.doe@example.com',
   };
@@ -55,14 +57,11 @@ const MyProfilePage = () => {
     },
   ];
 
-  if (!profile) {
-    // TODO: Skeleton
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="px-0 sm:px-10 lg:px-16 py-0">
-      <ProfileUI user={profile} isOwnProfile={true} products={products} />
+      <Suspense fallback={<ProfileSkeleton isOwnProfile={true} />}>
+        <ProfileUI user={profile} isOwnProfile={true} products={products} />
+      </Suspense>
     </div>
   );
 };

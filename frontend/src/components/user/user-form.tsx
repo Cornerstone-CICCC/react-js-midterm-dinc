@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { UserFormInputs, userSchema } from "@/schemas/userSchemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { UserFormInputs, userSchema } from '@/schemas/userSchemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -12,49 +12,86 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import ImageUpload from "@/components/user/image-upload";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useState } from 'react';
+import { useFirebaseStorage } from '@/hooks/useFirebaseStorage';
+import ImageUpload from './image-upload';
 
 const UserProfileForm = () => {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
-  const router = useRouter();
+  const { uploadImage } = useFirebaseStorage();
 
   const form = useForm<UserFormInputs>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: "New user",
-      userName: "",
-      bio: "",
+      name: '',
+      userName: '',
+      bio: '',
+      location: '',
     },
   });
 
-
-  const bioValue = form.watch("bio");
+  const bioValue = form.watch('bio');
   const bioLength = bioValue?.length || 0;
-  const nameValue = form.watch("name");
+  const nameValue = form.watch('name');
   const nameLength = nameValue?.length || 0;
-  const usernameValue = form.watch("userName");
+  const usernameValue = form.watch('userName');
   const usernameLength = usernameValue?.length || 0;
 
   const onSave: SubmitHandler<UserFormInputs> = async (data) => {
+    // if (!userId) {
+    //   throw new Error('User ID is not available');
+    // }
+    console.log(data);
+
+    try {
       // Upload the image to Firebase Storage
-    // 
+      // let fileId = user.fileId;
+      let fileId = 'test';
+
+      if (uploadedImage) {
+        fileId = await uploadImage(
+          uploadedImage,
+          // `profile-images/${user.id}`,
+          `profile-images/test`,
+
+          // user.fileId,
+        );
+      }
+
+      console.log(fileId);
+
+      // const { name, userName, bio } = data;
+
+      // const updatedUser: User = {
+      //   id: userId,
+      //   name,
+      //   userName,
+      //   email: user.email,
+      //   bio,
+      //   fileId: fileId,
+      // };
+
+      // const res = await onSubmit(updatedUser);
+
+      // if (!res) {
+      //   throw new Error('Failed to update user');
+      // }
+
+      // setUser(updatedUser);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">
-        Edit Profile
-      </h1>
-      
+      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
 
+      <ImageUpload onFileSelect={setUploadedImage} />
 
-     
-      
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSave)} className="space-y-8">
           <FormField
@@ -62,9 +99,13 @@ const UserProfileForm = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="text-lg font-bold mt-8">Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Name" {...field} />
+                  <Input
+                    placeholder="Name"
+                    {...field}
+                    className="p-6 rounded-3xl"
+                  />
                 </FormControl>
                 <div className="flex justify-between">
                   <FormDescription>
@@ -81,11 +122,11 @@ const UserProfileForm = () => {
             name="bio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Bio</FormLabel>
+                <FormLabel className="text-lg font-bold">Bio</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Tell us a little bit about yourself"
-                    className="resize-none"
+                    placeholder="Bio"
+                    className="rounded-xl resize-none"
                     {...field}
                   />
                 </FormControl>
@@ -98,12 +139,35 @@ const UserProfileForm = () => {
           />
           <FormField
             control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg font-bold">Location</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Location"
+                    {...field}
+                    className="p-6 rounded-3xl"
+                  />
+                </FormControl>
+                <div className="flex justify-between">
+                  <FormMessage className="w-full" />
+                </div>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="userName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel className="text-lg font-bold">Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="Username" {...field} />
+                  <Input
+                    placeholder="Username"
+                    {...field}
+                    className="p-6 rounded-3xl"
+                  />
                 </FormControl>
                 <div className="flex justify-between">
                   <FormMessage className="w-full" />
@@ -114,7 +178,7 @@ const UserProfileForm = () => {
               </FormItem>
             )}
           />
-          <Button className="w-full" type="submit">
+          <Button className="w-full p-6 font-bold" type="submit">
             Save
           </Button>
         </form>

@@ -1,7 +1,17 @@
-import ProfileUI from '@/components/profile/profile-ui';
+'use client';
 
-const UserPage = ({ params }: { params: { userId: string } }) => {
-  const { userId } = params;
+import ProfileUI from '@/components/profile/profile-ui';
+import ProfileSkeleton from '@/components/profile/profile-skeleton';
+import { Product } from '@/types/product';
+import { Suspense, use } from 'react';
+
+type PageParams = {
+  userId: string;
+};
+
+const UserPage = ({ params }: { params: Promise<PageParams> }) => {
+  const resolvedParams = use(params);
+  const { userId } = resolvedParams;
 
   // TODO: get user
   const user = {
@@ -11,10 +21,10 @@ const UserPage = ({ params }: { params: { userId: string } }) => {
     location: 'Vancouver, BC, Canada',
     email: 'john.doe@example.com',
     bio: 'I am a software engineer',
-  };  
+  };
 
   // TODO: get products
-  const products = [
+  const products: Product[] = [
     {
       id: '1',
       name: 'Producttttttttttttttttttttttttttttttttttttttttttttttttttttt 1',
@@ -31,9 +41,11 @@ const UserPage = ({ params }: { params: { userId: string } }) => {
 
   return (
     <div className="px-0 sm:px-10 lg:px-16 py-0">
-      <ProfileUI user={user} isOwnProfile={false} products={products} />
+      <Suspense fallback={<ProfileSkeleton isOwnProfile={false} />}>
+        <ProfileUI user={user} isOwnProfile={false} products={products} />
+      </Suspense>
     </div>
-  )
-}
+  );
+};
 
 export default UserPage;
