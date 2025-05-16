@@ -1,11 +1,20 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Product } from '@/types/product';
 import Link from 'next/link';
 import { SearchProvider, useSearchContext } from '@/context/SearchContext';
 import Image from 'next/image';
 import SearchSidebar from '@/components/SearchSidebar';
 import { useSearchParams } from 'next/navigation';
+
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  thumbnail: string;
+  category: string;
+  stock: number;
+}
 
 const HomeChild = () => {
   const { search, setSearch, selectedCategory } = useSearchContext();
