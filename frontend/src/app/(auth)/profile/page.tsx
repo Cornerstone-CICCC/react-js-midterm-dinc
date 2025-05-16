@@ -1,0 +1,70 @@
+'use client';
+
+import ProfileUI from '@/components/profile/profile-ui';
+import { Product } from '@/types/product';
+
+const MyProfilePage = () => {
+  // TODO: get user
+  const profile = {
+    id: '1',
+    name: 'John Doe',
+    userName: 'johndoe',
+    location: 'Vancouver, BC, Canada',
+    bio: 'When I’m not working, you’ll find me [personal hobbies or interests, e.g., exploring new technologies, reading about history, or hiking in nature]. I’m also deeply interested in [your specific interests or causes, e.g., promoting digital accessibility or sustainability].',
+    fileId: '1',
+    email: 'john.doe@example.com',
+  };
+
+  // TODO: get products
+  const products: Product[] = [
+    {
+      id: '1',
+      name: 'Producttttttttttttttttttttttttttttttttttttttttttttttttttttt 1',
+      description: 'Product 1 description',
+      price: 100,
+      imageUrl: '/test.jpeg',
+      categoryId: '1',
+      userId: '1',
+      status: true,
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
+    },
+    {
+      id: '2',
+      name: 'Product 2',
+      description: 'Product 2 description',
+      price: 200,
+      imageUrl: '/test.jpeg',
+      categoryId: '1',
+      userId: '1',
+      status: true,
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
+    },
+    {
+      id: '3',
+      name: 'Product 2',
+      description: 'Product 2 description',
+      price: 200,
+      imageUrl: '/test.jpeg',
+      categoryId: '1',
+      userId: '1',
+      status: true,
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
+    },
+  ];
+
+  if (!profile) {
+    // TODO: Skeleton
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="px-0 sm:px-10 lg:px-16 py-0">
+      <ProfileUI user={profile} isOwnProfile={true} products={products} />
+    </div>
+  );
+};
+
+export default MyProfilePage;

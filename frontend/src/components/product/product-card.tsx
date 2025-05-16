@@ -1,0 +1,42 @@
+import Image from 'next/image';
+import { Product } from '@/types/product';
+import { useRouter } from 'next/navigation';
+
+interface ProductCardProps {
+  product: Product;
+}
+
+const ProductCard = ({ product }: ProductCardProps) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/product/${product.id}`);
+  };
+
+  return (
+    <div
+      className="flex flex-col w-full cursor-pointer hover:opacity-80"
+      onClick={handleClick}
+    >
+      <div className="relative aspect-square rounded bg-gray-200">
+        <Image
+          src={product.imageUrl}
+          alt={product.name}
+          fill
+          className="object-contain p-1"
+        />
+        {!product.status && (
+          <div className="absolute inset-0 rounded bg-stone-950/75 flex items-center justify-center">
+            <span className="text-stone-100 text-lg font-bold">SOLD OUT</span>
+          </div>
+        )}
+      </div>
+      <div className="hidden sm:block">
+        <p className="text-xl font-bold mt-1">${product.price}</p>
+        <h2 className="line-clamp-2">{product.name}</h2>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
