@@ -47,7 +47,7 @@ const HomeChild = () => {
   }, [searchQuery, setSearch]);
 
   return (
-    <div className='flex w-full md:ml-[260px]'>
+    <div className='flex w-full md:ml-[260px] pb-6'>
       <div className='grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4 w-full p-2 max-md:mt-48'>
         {products.filter(product => selectedCategory === '' || selectedCategory === product.category.toLowerCase()).map((product) => (
           <Link href={`/products/${product.id}`} key={product.id}>
