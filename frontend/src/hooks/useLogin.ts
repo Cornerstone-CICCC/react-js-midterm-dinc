@@ -37,7 +37,7 @@ export function useLogin() {
 
       setUser(responseData.user);
 
-      const callbackUrl = searchParams.get('callbackUrl') || '/posts';
+      const callbackUrl = searchParams.get('callbackUrl') || '/';
       router.push(callbackUrl);
 
       return true;
