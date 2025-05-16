@@ -6,9 +6,8 @@ type SearchContextType = {
   setSearch: (value: string) => void;
   searchInput: string;
   setSearchInput: (value: string) => void;
-  categories: string[];
+  selectedCategory: string;
   handleCategory: (category: string) => void;
-  handleResetFilter: () => void;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -16,20 +15,14 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [search, setSearch] = useState<string>('');
   const [searchInput, setSearchInput] = useState<string>('');
-  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const handleCategory = (category: string) => {
-    setCategories((prevState) =>
-      prevState.includes(category)
-        ? prevState.filter((cat) => cat !== category)
-        : [...prevState, category]
-    );
-  };
-
-  const handleResetFilter = () => {
-    setCategories([]);
-    setSearch('');
-    setSearchInput('');
+    if (selectedCategory === category) {
+      setSelectedCategory('');
+    } else {
+      setSelectedCategory(category);
+    }
   };
 
   return (
@@ -39,9 +32,8 @@ const SearchProvider = ({ children }: { children: ReactNode }) => {
         setSearch,
         searchInput,
         setSearchInput,
-        categories,
+        selectedCategory,
         handleCategory,
-        handleResetFilter,
       }}
     >
       {children}
