@@ -19,7 +19,7 @@ const styles = {
   base: 'fixed z-10 flex items-center px-4',
   mobile:
     'justify-around py-4 shadow-2xs bg-white border-1 bottom-4 rounded-4xl right-5 left-5',
-  pc: 'md:justify-between md:py-4 md:w-full md:border-b-2 md:border-black md:bg-white',
+  pc: 'md:justify-between md:py-2 md:w-full md:border-b-2 md:border-black md:bg-white',
 };
 
 const Header = () => {
@@ -126,7 +126,7 @@ const Header = () => {
                         asChild
                         size={'icon'}
                         variant={'outline'}
-                        className="size-10 rounded-full px-0 py-0"
+                        className="size-8 rounded-full px-0 py-0"
                       >
                         <Link href={`/work/new`}>
                           <Plus className="size-5" />
@@ -138,7 +138,7 @@ const Header = () => {
                         <DropdownMenuTrigger asChild>
                           <Button
                             size={'icon'}
-                            className="size-10 rounded-full px-0 py-0"
+                            className="size-8 rounded-full px-0 py-0 align-middle"
                           >
                             <Avatar className="flex items-center justify-center">
                               {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
@@ -173,7 +173,7 @@ const Header = () => {
                       asChild
                       size={'icon'}
                       variant={'ghost'}
-                      className="size-10 px-0 py-0"
+                      className="size-8 px-0 py-0"
                     >
                       <Link href={`/login`}>
                         <LogIn className="size-5" />
