@@ -61,7 +61,7 @@ const ProductForm = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
+      'image/*': ['.jpeg', '.jpg', '.png'],
     },
     disabled: uploadedImages.length >= MAX_IMAGES,
   });
@@ -209,7 +209,7 @@ const ProductForm = ({
                       max="1000000"
                       className="pl-10 pr-4 h-14 text-2xl text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       {...field}
-                      value={field.value ? formatPrice(field.value) : ''}
+                      value={field.value !== undefined && field.value !== null ? formatPrice(field.value) : ''}
                       onChange={onPriceChange}
                     />
                   </div>
