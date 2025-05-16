@@ -18,18 +18,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { useFirebaseStorage } from '@/hooks/useFirebaseStorage';
 import ImageUpload from './image-upload';
+import useUserStore from '@/stores/useUserStore';
+import { User } from '@/types/user';
 
 const UserProfileForm = () => {
+  const { user, setUser } = useUserStore();
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const { uploadImage } = useFirebaseStorage();
 
   const form = useForm<UserFormInputs>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: '',
-      userName: '',
-      bio: '',
-      location: '',
+      name: user?.name || '',
+      userName: user?.userName || '',
+      bio: user?.bio || '',
+      location: user?.location || '',
     },
   });
 
@@ -41,38 +44,30 @@ const UserProfileForm = () => {
   const usernameLength = usernameValue?.length || 0;
 
   const onSave: SubmitHandler<UserFormInputs> = async (data) => {
-    // if (!userId) {
-    //   throw new Error('User ID is not available');
-    // }
-    console.log(data);
+    if (!user) {
+      throw new Error('User ID is not available');
+    }
 
     try {
       // Upload the image to Firebase Storage
-      // let fileId = user.fileId;
-      let fileId = 'test';
+      let imageUrl = user.fileId;
 
       if (uploadedImage) {
-        fileId = await uploadImage(
+        imageUrl = await uploadImage(
           uploadedImage,
-          // `profile-images/${user.id}`,
-          `profile-images/test`,
-
-          // user.fileId,
+          `profile-images/${user.id}`,
+          user.fileId,
         );
       }
 
-      console.log(fileId);
-
-      // const { name, userName, bio } = data;
-
-      // const updatedUser: User = {
-      //   id: userId,
-      //   name,
-      //   userName,
-      //   email: user.email,
-      //   bio,
-      //   fileId: fileId,
-      // };
+      const updatedUser: User = {
+        id: user.id,
+        name: data.name,
+        bio: data.bio,
+        location: data.location,
+        userName: data.userName,
+        fileId: imageUrl,
+      };
 
       // const res = await onSubmit(updatedUser);
 
@@ -80,7 +75,7 @@ const UserProfileForm = () => {
       //   throw new Error('Failed to update user');
       // }
 
-      // setUser(updatedUser);
+      setUser(updatedUser);
     } catch (err) {
       console.log(err);
     }
@@ -90,7 +85,7 @@ const UserProfileForm = () => {
     <div className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
 
-      <ImageUpload onFileSelect={setUploadedImage} />
+      <ImageUpload image={user?.fileId || '/default-profile.png'} onFileSelect={setUploadedImage} />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSave)} className="space-y-8">
@@ -178,6 +173,7 @@ const UserProfileForm = () => {
               </FormItem>
             )}
           />
+          {/* TODO: loading state */}
           <Button className="w-full p-6 font-bold" type="submit">
             Save
           </Button>
