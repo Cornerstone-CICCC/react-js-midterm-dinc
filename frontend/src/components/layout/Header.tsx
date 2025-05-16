@@ -1,3 +1,5 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -7,13 +9,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import useUserStore from '@/stores/useUserStore';
 import { LogIn, LogOut, Plus, UserRound } from 'lucide-react';
 import Link from 'next/link';
 
+const styles = {
+  base: 'fixed z-10 flex justify-between px-4 py-4 shadow-2xs bg-white border-1 items-center bottom-4 rounded-4xl right-5 left-5',
+  pc: 'lg:w-full lg:border-b-2 lg:border-black lg:bg-white',
+};
+
 const Header = () => {
-  const isLogin = false;
+  const { user } = useUserStore();
+  console.log(user);
   return (
-    <header className="w-full flex justify-between px-4 py-4 border-b-2 border-black items-center fixed">
+    <header className={`${styles.base} ${styles.pc}`}>
       <h1 className="font-bold">
         <Link href="/" className="flex flex-col gap-2">
           <span>DINCT</span>
@@ -22,7 +31,7 @@ const Header = () => {
       <div>
         <nav>
           <ul className="flex gap-3 items-center">
-            {isLogin ? (
+            {user !== null ? (
               <>
                 <li>
                   <Button
