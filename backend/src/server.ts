@@ -1,9 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import authRoutes from "./routes/authRoutes";
 import { connectDB } from "./config/db";
 import cookieParser from 'cookie-parser'
+import authRouter from "./routes/authRoutes";
+import userRouter from "./routes/userRoutes";
 
 dotenv.config();
 
@@ -22,7 +23,8 @@ app.use(cookieParser(process.env.COOKIE_SECRET_KEY))
 app.get("/", (req: Request, res: Response) => {
   res.send("API Running");
 });
-app.use("/auth", authRoutes);
+app.use("/auth", authRouter);
+app.use("/users", userRouter);
 
 const PORT = process.env.PORT || 4500;
 
