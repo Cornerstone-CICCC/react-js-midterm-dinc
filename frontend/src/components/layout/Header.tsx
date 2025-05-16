@@ -13,7 +13,6 @@ import useIsMobile from '@/hooks/useIsMobile';
 import useUserStore from '@/stores/useUserStore';
 import { HomeIcon, LogIn, LogOut, Plus, UserRound } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const styles = {
@@ -24,31 +23,12 @@ const styles = {
 };
 
 const Header = () => {
-  const { user, setUser } = useUserStore();
+  const { user } = useUserStore();
   const isMobile = useIsMobile();
   const [mounted, setMoundted] = useState(false);
-  const router = useRouter();
 
   const handleLogout = async () => {
-    try {
-      const res = await fetch('http://localhost:4500/auth/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
-
-      if (!res.ok) {
-        throw new Error('Logout failed');
-      }
-      const data = await res.json();
-      console.log('Logout response:', data);
-
-      // Clear the user from zustand store
-      setUser(null);
-      router.refresh();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+    // logout
   };
 
   useEffect(() => {
