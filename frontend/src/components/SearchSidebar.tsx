@@ -1,14 +1,10 @@
 'use client';
 import { Search } from 'lucide-react';
 import { useSearchContext } from '@/context/SearchContext';
-import { useRouter } from 'next/navigation';
 
 const SearchSidebar = () => {
 
-  const router = useRouter();
-
   const {
-    setSearch,
     searchInput,
     setSearchInput,
     selectedCategory,
@@ -31,21 +27,10 @@ const SearchSidebar = () => {
     setSearchInput(e.target.value);
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSearch(searchInput);
-
-    if (searchInput.trim() === '') {
-      router.push('/');
-    } else {
-      router.push(`/?search=${encodeURIComponent(searchInput)}`);
-    }
-  }
-
   return (
     <div className='px-4 md:w-64 fixed z-100 bg-white max-md:w-full transition h-auto'>
-      <form onSubmit={handleSubmit} className='flex justify-center items-center md:mt-4'>
-        <input type="text" value={searchInput} onChange={handleChange} placeholder='Search...' className='shadow-[0_0_1px] rounded-3xl w-full py-2 pl-4 pr-9' />
+      <form method='GET' action='/products' className='flex justify-center items-center md:mt-4'>
+        <input type="text" value={searchInput} name='search' onChange={handleChange} placeholder='Search...' className='shadow-[0_0_1px] rounded-3xl w-full py-2 pl-4 pr-9' />
         <button className='-translate-x-8 cursor-pointer'><Search /></button>
       </form>
 
