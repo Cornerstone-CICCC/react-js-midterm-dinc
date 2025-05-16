@@ -71,7 +71,7 @@ const Header = () => {
                 asChild
                 variant={'secondary'}
               >
-                <Link href={`/user-profile/1`}>
+                <Link href={`/profile`}>
                   <Avatar className="flex items-center justify-center">
                     {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
                     <AvatarImage
@@ -153,7 +153,7 @@ const Header = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent sideOffset={6} align="end">
                           <DropdownMenuItem asChild>
-                            <Link href={`/user-profile/1`}>
+                            <Link href={`/profile`}>
                               <UserRound />
                               <span>Profile</span>
                             </Link>
