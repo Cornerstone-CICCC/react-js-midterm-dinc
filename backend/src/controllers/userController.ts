@@ -61,7 +61,8 @@ const updateUserById = async (req: RequestWithUser, res: Response) => {
     ).select("-password");
 
     if (!updatedUser) {
-      res.status(404).json({ success: false, message: "User not found"})
+      res.status(404).json({ success: false, message: "User not found"});
+      return;
     }
 
     res.status(200).json({ success: true, user: updatedUser });
