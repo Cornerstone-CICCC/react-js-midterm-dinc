@@ -37,6 +37,7 @@ const updateUserById = async (req: RequestWithUser, res: Response) => {
 
       if (existingUserName) {
         res.status(400).json({ success: false, message: "This user name already exists" });
+        return;
       }
 
       updateData.userName = userName;
