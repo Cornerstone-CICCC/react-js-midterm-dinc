@@ -25,6 +25,7 @@ const updateUserById = async (req: RequestWithUser, res: Response) => {
 
     if (req.user && req.user._id.toString() !== userId) {
       res.status(403).json({ success: false, message: "You are not authorized to update this user" });
+      return;
     }
 
     const { userName, email, ...otherUpdates } = req.body;
