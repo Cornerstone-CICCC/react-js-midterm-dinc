@@ -48,6 +48,7 @@ const updateUserById = async (req: RequestWithUser, res: Response) => {
 
       if (existingEmail) {
         res.status(400).json({ success: false, message: "This email already exists" });
+        return;
       }
 
       updateData.email = email;
