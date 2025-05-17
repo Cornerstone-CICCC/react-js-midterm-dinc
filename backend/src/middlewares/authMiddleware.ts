@@ -1,12 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel';
+import { IUser } from '../types/user';
 
 interface JwtPayload {
   id: string;
 }
+export interface RequestWithUser extends Request {
+  user?: IUser;
+}
 
-const protect = async (req: Request, res: Response, next: NextFunction) => {
+const protect = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -24,6 +28,7 @@ const protect = async (req: Request, res: Response, next: NextFunction) => {
       res.status(401).json({ message: 'Not authorized, user not found' });
       return;
     }
+    req.user = user;
 
     next();
   } catch (error) {

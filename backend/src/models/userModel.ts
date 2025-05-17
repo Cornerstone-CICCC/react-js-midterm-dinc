@@ -10,6 +10,7 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true },
     bio: { type: String, default: '' },
     fileId: { type: String, default: '' },
+    location: { type: String, default: '' },
     lastLogin: { type: Date, default: null },
     isLoggedIn: { type: Boolean, default: false },
   },
