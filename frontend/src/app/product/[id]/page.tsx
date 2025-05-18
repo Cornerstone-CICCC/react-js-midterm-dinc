@@ -12,8 +12,8 @@ import { useState } from 'react';
 const imagesList = ['product1.png', 'product2.png', 'product3.png'];
 
 interface IProductItem {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   title: string;
   description: string;
   price: number;
@@ -25,8 +25,8 @@ interface IProductItem {
 }
 
 const productItem: IProductItem = {
-  id: 1,
-  userId: 1,
+  id: '555',
+  userId: '682a1a098e1c62a2ff29c520',
   title: 'Modern Wooden Coffee Table',
   description:
     'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
@@ -107,7 +107,7 @@ const ProductDetail = () => {
               <AvatarFallback>S</AvatarFallback>
             </Avatar>
             <p className="truncate font-semibold">
-              <Link href={`/profile/${productItem.userId}`}>
+              <Link href={`/user/${productItem.userId}`}>
                 {productItem.userId}
               </Link>
             </p>
@@ -115,7 +115,7 @@ const ProductDetail = () => {
 
           {/** below button will be show only when seller and user is same. */}
           <Button className="w-full" size={'lg'} asChild>
-            <Link href={`/work/1/edit`}>
+            <Link href={`/work/${productItem.id}/edit`}>
               <span className="uppercase">Edit</span>
             </Link>
           </Button>

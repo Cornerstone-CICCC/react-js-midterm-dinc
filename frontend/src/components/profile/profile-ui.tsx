@@ -20,6 +20,8 @@ const ProfileUI = ({ user, isOwnProfile, products }: ProfileUIProps) => {
   const maxLength = 150;
   const mobileMaxLength = 50;
 
+  console.log(user);
+
   const handleEditProfile = () => {
     router.push(`/profile/edit`);
   };

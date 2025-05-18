@@ -4,9 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   images: {
     unoptimized: true,
+    domains: ['cdn.dummyjson.com'],
   },
-  domains: ['cdn.dummyjson.com'],
-  }
 };
 
 export default nextConfig;
