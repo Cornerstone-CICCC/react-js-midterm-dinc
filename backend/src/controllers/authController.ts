@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/userModel";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const generateToken = (id: string) => {
   const secret = process.env.JWT_SECRET;
@@ -33,7 +34,17 @@ const signup = async (req: Request, res: Response) => {
       res.status(400).json({ message: 'User already exists' });
     }
 
+    const baseUserName = email.split('@')[0];
+
+    const sanitizedBase = baseUserName.replace(/[^a-zA-Z0-9]/g, '');
+
+    const salt = Date.now().toString() + Math.random().toString();
+    const hash = crypto.createHash('md5').update(email + salt).digest('hex');
+    const initialName = `${sanitizedBase}_${hash.substring(0, 8)}`;
+
     const user = await User.create({
+      name: initialName,
+      userName: initialName,
       email,
       password,
     });
@@ -50,8 +61,9 @@ const signup = async (req: Request, res: Response) => {
         success: true,
         user: {
           id: user.id.toString(),
+          name: user.name,
+          userName: user.userName,
           email: user.email,
-          userName: user.userName || "",
         },
       });
     } else {
