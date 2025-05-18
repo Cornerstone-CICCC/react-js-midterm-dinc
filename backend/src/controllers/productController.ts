@@ -21,17 +21,46 @@ export const getProductList = async (
   next: NextFunction,
 ) => {
   try {
-    // TODO: Solve the following:
-    // Pagination
-    // User
-    // Category
-    // Search
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
 
-    const products = await Product.find();
-    if (products.length === 0) {
-      res.status(200).json([]);
+    const { userId, category, search } = req.query;
+
+    const filter: any = {};
+
+    // Filter by user
+    if (userId) {
+      filter.userId = userId;
     }
-    res.json(products);
+
+    // Filter by categorySlug
+    if (category) {
+      filter.categorySlug = category;
+    }
+
+    // Search by name or description (case-insensitive)
+    if (search) {
+      const searchRegex = new RegExp(search as string, 'i');
+      filter.$or = [{ name: searchRegex }, { description: searchRegex }];
+    }
+
+    const products = await Product.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // optional: newest first
+
+    const total = await Product.countDocuments(filter);
+
+    res.status(200).json({
+      data: products,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -123,34 +152,12 @@ export const getProductsByCategory = async (
   try {
     const category = req.params.category;
     const products = await Product.find({
-      categoryId: new mongoose.Types.ObjectId(category),
+      categorySlug: category,
     });
     if (products.length === 0) {
       return res
         .status(404)
         .json({ message: 'No products found in this category' });
-    }
-    res.json(products);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const searchProducts = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const query = req.query.q;
-    const products = await Product.find({
-      $or: [
-        { name: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } },
-      ],
-    });
-    if (products.length === 0) {
-      return res.status(404).json({ message: 'No products found' });
     }
     res.json(products);
   } catch (error) {
@@ -172,25 +179,6 @@ export const getProductsByPriceRange = async (
       return res
         .status(404)
         .json({ message: 'No products found in this price range' });
-    }
-    res.json(products);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getProductsByUserId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const userId = req.params.userId;
-    const products = await Product.find({ userId });
-    if (products.length === 0) {
-      return res
-        .status(404)
-        .json({ message: 'No products found for this user' });
     }
     res.json(products);
   } catch (error) {

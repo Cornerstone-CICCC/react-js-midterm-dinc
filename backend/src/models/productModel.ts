@@ -29,8 +29,8 @@ const productSchema = new Schema(
       enum: ['active', 'inactive', 'sold'],
       default: 'active',
     },
-    categoryId: {
-      type: mongoose.Schema.Types.ObjectId,
+    categorySlug: {
+      type: String,
       ref: 'Category',
       required: true,
     },
