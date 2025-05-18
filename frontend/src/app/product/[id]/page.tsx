@@ -8,34 +8,21 @@ import { DotIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-
+import useProductStore from '@/stores/useProductStore';
+import { Product } from '@/types/product';
 const imagesList = ['product1.png', 'product2.png', 'product3.png'];
 
-interface IProductItem {
-  id: string;
-  userId: string;
-  title: string;
-  description: string;
-  price: number;
-  location: string;
-  category: string;
-  status: 'available' | 'sold';
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const productItem: IProductItem = {
-  id: '555',
-  userId: '682a1a098e1c62a2ff29c520',
-  title: 'Modern Wooden Coffee Table',
-  description:
-    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
-  price: 299,
-  location: 'Vancouver, BC',
-  category: 'Home',
-  status: 'available',
-  createdAt: new Date('2025-05-7'),
-  updatedAt: new Date('2025-05-7'),
+const productItem: Product = {
+  id: '126a203f-0f4c-4fd0-834b-29a3cb55efff',
+  name: 'Full',
+  price: 470,
+  userId: '2881e4fd-e747-4904-98fc-ffaee1d53dd9',
+  description: 'Central cup about good institution election.',
+  imageUrl: '/product1.png',
+  categoryId: 'fa1bb246-8d1c-4e81-99d4-52ed7721d1ee',
+  status: true,
+  createdAt: '2025-02-19T22:46:11.813532',
+  updatedAt: '2025-05-18T22:46:11.813550',
 };
 
 const ProductDetail = () => {
@@ -115,13 +102,20 @@ const ProductDetail = () => {
 
           {/** below button will be show only when seller and user is same. */}
           <Button className="w-full" size={'lg'} asChild>
-            <Link href={`/work/${productItem.id}/edit`}>
+            <Link href={`/work/edit/${productItem.id}`}>
               <span className="uppercase">Edit</span>
             </Link>
           </Button>
 
           {productItem.status === 'available' ? (
-            <Button className="w-full" size={'lg'} asChild>
+            <Button
+              className="w-full"
+              size={'lg'}
+              onClick={() => {
+                useProductStore.getState().setProduct(productItem);
+              }}
+              asChild
+            >
               <Link href="/payment">
                 <span className="uppercase">Purchase</span>
               </Link>
