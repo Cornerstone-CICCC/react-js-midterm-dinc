@@ -4,18 +4,14 @@ import ProfileUI from '@/components/profile/profile-ui';
 import ProfileSkeleton from '@/components/profile/profile-skeleton';
 import { Product } from '@/types/product';
 import { Suspense } from 'react';
+import useUserStore from '@/stores/useUserStore';
 
 const MyProfilePage = () => {
-  // TODO: get user
-  const profile = {
-    id: '1',
-    name: 'John Doe',
-    userName: 'johndoe',
-    location: 'Vancouver, BC, Canada',
-    bio: "When I'm not working, you'll find me [personal hobbies or interests, e.g., exploring new technologies, reading about history, or hiking in nature]. I'm also deeply interested in [your specific interests or causes, e.g., promoting digital accessibility or sustainability].",
-    fileId: '1',
-    email: 'john.doe@example.com',
-  };
+  const { user } = useUserStore();
+
+  if (!user) {
+    return <ProfileSkeleton isOwnProfile={true} />;
+  }
 
   // TODO: get products
   const products: Product[] = [
@@ -60,7 +56,7 @@ const MyProfilePage = () => {
   return (
     <div className="px-0 sm:px-10 lg:px-16 py-0">
       <Suspense fallback={<ProfileSkeleton isOwnProfile={true} />}>
-        <ProfileUI user={profile} isOwnProfile={true} products={products} />
+        <ProfileUI user={user} isOwnProfile={true} products={products} />
       </Suspense>
     </div>
   );

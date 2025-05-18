@@ -43,7 +43,7 @@ const ProfileUI = ({ user, isOwnProfile, products }: ProfileUIProps) => {
           <div className="flex items-center justify-center gap-5 md:gap-10">
             <div className="relative w-24 h-24 lg:w-40 lg:h-40">
               <Image
-                src="/test.jpeg"
+                src={user.fileId || '/default-profile.png'}
                 alt={`${user.name}'s profile picture`}
                 fill
                 className="rounded-full object-cover shadow-lg"
