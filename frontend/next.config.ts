@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  domains: ['cdn.dummyjson.com'],
+  }
 };
 
 export default nextConfig;
