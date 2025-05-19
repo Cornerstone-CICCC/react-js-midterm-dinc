@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Product from '../models/productModel';
 import mongoose from 'mongoose';
 import { RequestWithUser } from '../middlewares/authMiddleware';
+import { lookup } from 'dns';
 
 export const getProducts = async (
   req: Request,
@@ -74,7 +75,39 @@ export const getProductById = async (
 ) => {
   try {
     const productId = req.params.id;
-    const product = await Product.findById(productId);
+    const product = await Product.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(productId) } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      { $unwind: '$user' },
+      {
+        $project: {
+          name: 1,
+          price: 1,
+          description: 1,
+          imageUrls: 1,
+          categorySlug: 1,
+          user: {
+            _id: '$user._id',
+            name: '$user.name',
+            email: '$user.email',
+            userName: '$user.userName',
+            bio: '$user.bio',
+            fileId: '$user.fileId',
+            lastLogin: '$user.lastLogin',
+            isLoggedIn: '$user.isLoggedIn',
+            createdAt: '$user.createdAt',
+            updatedAt: '$user.updatedAt',
+          },
+        },
+      },
+    ]);
     if (!product) {
       res.status(404).json({ message: 'Product not found' });
     }

@@ -14,7 +14,7 @@ export const userSchema = z.object({
     .nonempty('Username is required')
     .min(3, 'Username must be 3-30 characters')
     .max(30, 'Username must be 3-30 characters'),
-  location: z.string().max(30, 'Location must be under 30 characters').nonempty('Location is required'),
+  location: z.string().max(100, 'Location must be under 100 characters'),
 });
 
 export type UserFormInputs = z.infer<typeof userSchema>;

@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useLogout } from '@/hooks/useLogout';
 import useUserStore from '@/stores/useUserStore';
 import { HomeIcon, LogIn, LogOut, Plus, UserRound } from 'lucide-react';
 import Link from 'next/link';
@@ -27,8 +28,14 @@ const Header = () => {
   const isMobile = useIsMobile();
   const [mounted, setMoundted] = useState(false);
 
+  const { logout } = useLogout();
+
   const handleLogout = async () => {
-    // logout
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   useEffect(() => {
@@ -73,11 +80,7 @@ const Header = () => {
               >
                 <Link href={`/profile`}>
                   <Avatar className="flex items-center justify-center">
-                    {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-                    <AvatarImage
-                      src={'https://github.com/shadcn.png'}
-                      className="object-cover"
-                    />
+                    <AvatarImage src={user.fileId || '/default_profile.png'} className="object-cover" />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <span className="sr-only">Profile</span>
@@ -141,9 +144,8 @@ const Header = () => {
                             className="size-8 rounded-full px-0 py-0 align-middle"
                           >
                             <Avatar className="flex items-center justify-center">
-                              {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
                               <AvatarImage
-                                src={'https://github.com/shadcn.png'}
+                                src={user.fileId || '/default_profile.png'}
                                 className="object-cover"
                               />
                               <AvatarFallback>CN</AvatarFallback>

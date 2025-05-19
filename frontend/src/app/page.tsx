@@ -8,6 +8,8 @@ import { useDebounce } from 'use-debounce';
 import SearchSidebar from '@/components/SearchSidebar';
 import { useSearchParams } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
+import HomeSkeleton from '@/components/home-skeleton';
+import { tilteToSlug } from '@/lib/utils';
 
 interface Product {
   _id: number;
@@ -22,7 +24,7 @@ interface Product {
 }
 
 const HomeChild = () => {
-  const { searchInput, setSearch, selectedCategory, handleCategory } =
+  const { searchValue, setSearch, selectedCategory, handleCategory } =
     useSearchContext();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
@@ -31,7 +33,7 @@ const HomeChild = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [initialFetched, setInitialFetched] = useState(false);
-  const [debouncedHandleSearch] = useDebounce(searchInput, 500);
+  const [debouncedHandleSearch] = useDebounce(searchValue, 500);
 
   const [ref, inView, entry] = useInView({
     threshold: 0,
@@ -44,7 +46,7 @@ const HomeChild = () => {
   const fetchProducts = async (search?: string, category?: string) => {
     try {
       const req = await fetch(
-        `http://localhost:4500/products/search?search=${search}&category=${category || ''}&page=${
+        `http://localhost:4500/products/search?search=${search}&category=${tilteToSlug(category || '')}&page=${
           page
         }&limit=${limit}`,
       );
@@ -60,7 +62,7 @@ const HomeChild = () => {
   };
 
   useEffect(() => {
-    if (searchQuery && !searchInput.length) {
+    if (searchQuery && !searchValue.length) {
       setSearch(searchQuery);
     }
 
@@ -89,7 +91,7 @@ const HomeChild = () => {
     if (initialFetched) {
       setTimeout(async () => {
         await fetchProducts(
-          searchInput ? searchInput : searchQuery,
+          searchValue ? searchValue : searchQuery,
           selectedCategory ? selectedCategory : searchCategory,
         );
         setLoading(false);
@@ -100,7 +102,7 @@ const HomeChild = () => {
   useEffect(() => {
     setTimeout(async () => {
       await fetchProducts(
-        searchInput ? searchInput : searchQuery,
+        searchValue ? searchValue : searchQuery,
         selectedCategory ? selectedCategory : searchCategory,
       );
       setLoading(false);
@@ -152,6 +154,11 @@ const HomeChild = () => {
 };
 
 const Home = () => {
+  const productSkeleton = true;
+
+  if (!productSkeleton) {
+    return <HomeSkeleton />;
+  }
   return (
     <div className="md:flex w-full">
       <SearchProvider>

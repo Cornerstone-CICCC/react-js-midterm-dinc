@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
@@ -11,6 +11,10 @@ interface ImageUploadProps {
 
 const ImageUpload = ({ image, onFileSelect }: ImageUploadProps) => {
   const [preview, setPreview] = useState<string>(image);
+
+  useEffect(() => {
+    setPreview(image);
+  }, [image]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { ProductFormInputs, productSchema } from '@/schemas/productSchema';
@@ -21,23 +21,29 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useWork } from '@/hooks/useWork';
+import { Product } from '@/types/product';
+import { CommonAlert } from '@/components/ui/common-alert';
+import { useFirebaseStorage } from '@/hooks/useFirebaseStorage';
+import useUserStore from '@/stores/useUserStore';
+import useProductStore from '@/stores/useProductStore';
 
 interface ProductFormProps {
   isEditMode?: boolean;
-  initialData?: ProductFormInputs;
   onDelete?: () => void;
 }
 
-const ProductForm = ({
-  isEditMode = false,
-  initialData,
-  onDelete,
-}: ProductFormProps) => {
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const { createWork, loading, showError, errorMessage, updateWork } =
+    useWork();
+  const { uploadImage } = useFirebaseStorage();
+  const { user } = useUserStore();
+  const { product } = useProductStore();
 
   const form = useForm<ProductFormInputs>({
     resolver: zodResolver(productSchema),
-    defaultValues: initialData || {
+    defaultValues: {
       title: '',
       description: '',
       price: 0,
@@ -45,17 +51,37 @@ const ProductForm = ({
     },
   });
 
+  useEffect(() => {
+    if (isEditMode && product) {
+      form.reset({
+        title: product.name || '',
+        description: product.description || '',
+        price: product.price || 0,
+        category: product.categorySlug || '',
+      });
+    }
+  }, [isEditMode, product, form]);
+
   const onDrop = (acceptedFiles: File[]) => {
     if (uploadedImages.length + acceptedFiles.length > MAX_IMAGES) {
       alert(`You can only upload up to ${MAX_IMAGES} images`);
       return;
     }
-    const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file));
-    setUploadedImages((prev) => [...prev, ...imageUrls]);
+
+    const validFiles = acceptedFiles.filter((file) => {
+      const extension = file.name.toLowerCase().split('.').pop();
+      return ['jpeg', 'jpg', 'png'].includes(extension || '');
+    });
+
+    if (validFiles.length !== acceptedFiles.length) {
+      alert('Only JPEG and PNG files are allowed');
+    }
+
+    setUploadedImages((prev) => [...prev, ...validFiles]);
   };
 
-  const removeImage = (url: string) => {
-    setUploadedImages((prev) => prev.filter((image) => image !== url));
+  const removeImage = (file: File) => {
+    setUploadedImages((prev) => prev.filter((image) => image !== file));
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -80,14 +106,55 @@ const ProductForm = ({
   };
 
   const onSubmit = (data: ProductFormInputs) => {
-    console.log('Submitted Data:', data);
+    if (!user) {
+      return;
+    }
+
+    if (uploadedImages.length === 0) {
+      alert('Please upload at least one image');
+      return;
+    }
+
+    // ファイル名からスペースを削除し、ハイフンに置き換える
+    const sanitizedTitle = data.title.replace(/\s+/g, '-').toLowerCase();
+
+    // Upload images to Firebase Storage
+    const imageUrls: string[] = [];
+    uploadedImages.forEach(async (image) => {
+      imageUrls.push(
+        await uploadImage(image, `products/${user.id}/${sanitizedTitle}`),
+      );
+    });
+
+    const newProduct: Partial<Product> = {
+      name: data.title,
+      price: data.price,
+      description: data.description,
+      imageUrls: imageUrls,
+      categorySlug: data.category,
+    };
+
+    if (isEditMode && product) {
+      updateWork(product.id, newProduct);
+    } else {
+      createWork(newProduct);
+    }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4">
+    <div className="max-w-xl mx-auto py-20">
       <h1 className="text-3xl font-bold mb-6 text-center">
         {isEditMode ? 'Edit listing' : 'Create listing'}
       </h1>
+
+      <div className="mb-6">
+        <CommonAlert
+          show={showError}
+          variant="destructive"
+          title="Error"
+          description={errorMessage}
+        />
+      </div>
 
       {/* Image Previews */}
       <div className="space-y-3">
@@ -101,7 +168,7 @@ const ProductForm = ({
               >
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
-                    src={image}
+                    src={URL.createObjectURL(image)}
                     alt={`Uploaded ${index}`}
                     className="max-w-full max-h-full object-contain"
                     width={300}
@@ -152,7 +219,12 @@ const ProductForm = ({
 
       {/* Form */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
+        <form
+          onSubmit={(e) => {
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-6 mt-6"
+        >
           <FormField
             control={form.control}
             name="title"
@@ -209,7 +281,11 @@ const ProductForm = ({
                       max="1000000"
                       className="pl-10 pr-4 h-14 text-2xl text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       {...field}
-                      value={field.value !== undefined && field.value !== null ? formatPrice(field.value) : ''}
+                      value={
+                        field.value !== undefined && field.value !== null
+                          ? formatPrice(field.value)
+                          : ''
+                      }
                       onChange={onPriceChange}
                     />
                   </div>
@@ -247,8 +323,12 @@ const ProductForm = ({
             )}
           />
 
-          <Button className="w-full p-5 text-lg" type="submit">
-            Publish
+          <Button
+            className="w-full p-5 text-lg"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? 'Publishing...' : 'Publish'}
           </Button>
 
           {isEditMode && onDelete && (

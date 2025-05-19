@@ -4,8 +4,8 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 type SearchContextType = {
   search: string;
   setSearch: (value: string) => void;
-  searchInput: string;
-  setSearchInput: (value: string) => void;
+  searchValue: string;
+  setSearchValue: (value: string) => void;
   selectedCategory: string;
   handleCategory: (category: string) => void;
 };
@@ -14,7 +14,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [search, setSearch] = useState<string>('');
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const handleCategory = (category: string) => {
@@ -30,8 +30,8 @@ const SearchProvider = ({ children }: { children: ReactNode }) => {
       value={{
         search,
         setSearch,
-        searchInput,
-        setSearchInput,
+        searchValue,
+        setSearchValue,
         selectedCategory,
         handleCategory,
       }}

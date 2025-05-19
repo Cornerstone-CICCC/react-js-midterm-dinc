@@ -3,16 +3,26 @@
 import { useState } from 'react';
 import ProductForm from '@/components/work/product-form';
 import { CommonDialog } from '@/components/ui/common-dialog';
-
+import { useWork } from '@/hooks/useWork';
+import useProductStore from '@/stores/useProductStore';
+import { useRouter } from 'next/navigation';
 const EditWorkPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  const { deleteWork } = useWork();
+  const { product } = useProductStore();
+  const router = useRouter();
   const onDelete = () => {
     setIsDialogOpen(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setIsDialogOpen(false);
+    if (product) {
+      const res = await deleteWork(product._id);
+      if (res) {
+        router.push('/');
+      }
+    }
   };
 
   return (

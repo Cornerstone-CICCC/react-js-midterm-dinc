@@ -54,7 +54,7 @@ const MyProfilePage = () => {
   ];
 
   return (
-    <div className="px-0 sm:px-10 lg:px-16 py-0">
+    <div className="px-0 sm:px-10 lg:px-16 py-14">
       <Suspense fallback={<ProfileSkeleton isOwnProfile={true} />}>
         <ProfileUI user={user} isOwnProfile={true} products={products} />
       </Suspense>

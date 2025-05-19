@@ -7,3 +7,8 @@ export interface User {
   fileId?: string;
   location?: string;
 }
+
+export interface GetUserApiResponse {
+  success: boolean;
+  user: User;
+};

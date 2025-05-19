@@ -1,21 +1,24 @@
 'use client';
-import { Search } from 'lucide-react';
 import { useSearchContext } from '@/context/SearchContext';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { CATEGORIES } from '@/constants/categories';
 import { tilteToSlug } from '@/lib/utils';
+import { SearchIcon } from 'lucide-react';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 
 const SearchSidebar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const categoryQuery = searchParams.get('category') || '';
-  const { searchInput, setSearchInput, selectedCategory, handleCategory } =
+  const { searchValue, setSearchValue, selectedCategory, handleCategory } =
     useSearchContext();
 
   useEffect(() => {
-    setSearchInput(searchQuery);
-  }, [searchQuery, setSearchInput]);
+    setSearchValue(searchQuery);
+  }, [searchQuery, setSearchValue]);
 
   useEffect(() => {
     if (categoryQuery) {
@@ -65,43 +68,40 @@ const SearchSidebar = () => {
 
   return (
     <div className="px-4 md:w-64 fixed z-100 bg-white max-md:w-full transition h-auto">
-      <form
-        method="GET"
-        action="/"
-        className="flex justify-center items-center md:mt-4"
-      >
-        <input
-          type="text"
-          value={searchInput}
+      <div className="flex justify-between gap-1">
+        <Input
+          placeholder="Search..."
+          value={searchValue}
+          className="p-4"
           name="search"
-          onChange={(e) => {
-            setSearchInput(e.target.value);
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setSearchValue(e.target.value);
             handleChange('search', e);
           }}
-          placeholder="Search..."
-          className="shadow-[0_0_1px] rounded-3xl w-full py-2 pl-4 pr-9"
         />
-        <button className="-translate-x-8 cursor-pointer">
-          <Search />
-        </button>
-      </form>
+        <Button size={'icon'} variant={'secondary'}>
+          <SearchIcon />
+        </Button>
+      </div>
 
       <div>
         <div className="flex justify-between pr-4 md:my-4 max-md:my-2">
           <h2 className="text-2xl">Categories</h2>
         </div>
-        <div className="md:grid grid-cols-2 gap-4 mt-4 flex max-md:overflow-scroll max-md:pb-4">
-          {categoriesList.map((category) => (
-            <div
-              key={category}
+        <div className="mt-4 flex md:block max-md:overflow-scroll max-md:pb-4 md:-m-1.5">
+          {CATEGORIES.map((cate) => (
+            <Button
+              key={cate}
+              variant={selectedCategory === cate ? 'default' : 'secondary'}
+              size={'sm'}
+              className={'m-1.5'}
               onClick={() => {
-                handleCategory(category);
-                handleChange('category', tilteToSlug(category));
+                handleCategory(cate);
+                handleChange('category', tilteToSlug(cate));
               }}
-              className={`p-4 rounded-lg cursor-pointer max-w-[150px] hover:scale-110 transition ${selectedCategory === category ? 'bg-black text-white' : 'bg-gray-300'}`}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </div>
+              {cate}
+            </Button>
           ))}
         </div>
       </div>
