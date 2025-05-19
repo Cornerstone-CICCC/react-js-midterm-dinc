@@ -17,6 +17,12 @@ const SearchSidebar = () => {
     setSearchInput(searchQuery);
   }, [searchQuery, setSearchInput]);
 
+  useEffect(() => {
+    if (categoryQuery) {
+      // handleCategory(categoryQuery);
+    }
+  }, [categoryQuery]);
+
   const categoriesList = [
     'beauty',
     'apparel',
@@ -63,9 +69,6 @@ const SearchSidebar = () => {
         method="GET"
         action="/"
         className="flex justify-center items-center md:mt-4"
-        // onSubmit={(e) => {
-        //   e.preventDefault();
-        // }}
       >
         <input
           type="text"

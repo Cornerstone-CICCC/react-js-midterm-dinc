@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { SearchProvider, useSearchContext } from '@/context/SearchContext';
 import Image from 'next/image';
 import { useInView } from 'react-intersection-observer';
+import { useDebounce } from 'use-debounce';
 import SearchSidebar from '@/components/SearchSidebar';
 import { useSearchParams } from 'next/navigation';
-import { slugToTitle } from '@/lib/utils';
 import { Spinner } from '@/components/ui/spinner';
 
 interface Product {
@@ -27,28 +27,24 @@ const HomeChild = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [initialFetched, setInitialFetched] = useState(false);
+  const [debouncedHandleSearch] = useDebounce(searchInput, 500);
 
   const [ref, inView, entry] = useInView({
     threshold: 0,
   });
-  // const [pagination, setPagination] = useState({
-  //   page: 1,
-  //   limit: 10,
-  //   total: 0,
-  //   totalPages: 0,
-  // });
 
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const searchCategory = searchParams.get('category') || '';
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (search?: string, category?: string) => {
     try {
       const req = await fetch(
-        `http://localhost:4500/products/search?search=${searchInput}&category=${selectedCategory || ''}&page=${
+        `http://localhost:4500/products/search?search=${search}&category=${category || ''}&page=${
           page
         }&limit=${limit}`,
       );
@@ -57,7 +53,6 @@ const HomeChild = () => {
       const newPagintaion = res.pagination;
       setProducts((prev) => [...prev, ...data]);
       setTotal(newPagintaion.total);
-      // setPage((prev) => (prev += 1));
       setTotalPages(Math.ceil(newPagintaion.total / limit));
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -72,17 +67,14 @@ const HomeChild = () => {
     if (searchCategory && !selectedCategory.length) {
       handleCategory(searchCategory);
     }
-  }, [searchQuery, searchCategory]);
+  }, []);
 
   useEffect(() => {
     if (loading) return;
     if (inView && page <= totalPages) {
       setLoading(true);
-      const timer = setTimeout(() => {
-        setLoading(false);
-        setPage((prev) => (prev += 1));
-      }, 0);
-      return () => clearTimeout(timer);
+      setPage((prev) => (prev += 1));
+      setLoading(false);
     }
   }, [inView]);
 
@@ -94,19 +86,25 @@ const HomeChild = () => {
     setTotalPages(0);
     setLimit(10);
     setLoading(true);
-    if (page === 1) {
+    if (initialFetched) {
       setTimeout(async () => {
-        await fetchProducts();
+        await fetchProducts(
+          searchInput ? searchInput : searchQuery,
+          selectedCategory ? selectedCategory : searchCategory,
+        );
         setLoading(false);
       }, 100);
     }
-    console.log('selectedCategory', selectedCategory);
-  }, [searchInput, selectedCategory]);
+  }, [debouncedHandleSearch, searchCategory]);
 
   useEffect(() => {
     setTimeout(async () => {
-      await fetchProducts();
+      await fetchProducts(
+        searchInput ? searchInput : searchQuery,
+        selectedCategory ? selectedCategory : searchCategory,
+      );
       setLoading(false);
+      if (!initialFetched) setInitialFetched(true);
     }, 100);
   }, [page]);
 

@@ -8,7 +8,7 @@ type SearchContextType = {
   setSearchInput: (value: string) => void;
   selectedCategory: string;
   handleCategory: (category: string) => void;
-}
+};
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
@@ -39,7 +39,7 @@ const SearchProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </SearchContext.Provider>
   );
-}
+};
 
 const useSearchContext = () => {
   const context = useContext(SearchContext);
@@ -47,6 +47,6 @@ const useSearchContext = () => {
     throw new Error('useSearchContext must be used within a SearchProvider');
   }
   return context;
-}
+};
 
 export { SearchProvider, useSearchContext };
