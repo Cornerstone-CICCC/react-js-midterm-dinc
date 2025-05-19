@@ -1,18 +1,14 @@
+import { User } from './user';
+
 export interface Product {
   id: string;
   name: string;
   price: number;
-  userId: string;
   description: string;
-  imageUrl: string;
-  categoryId: string;
-  status: boolean;
+  imageUrls: string[];
+  status: string;
+  categorySlug: string;
   createdAt: string;
   updatedAt: string;
+  user: User;
 }
-
-export interface ProductCategory {
-  id: number;
-  name: string;
-}
-

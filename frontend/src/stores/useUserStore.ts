@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { User } from "@/types/user";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { User } from '@/types/user';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface UserState {
   user: User | null;
@@ -21,9 +21,9 @@ const useUserStore = create<UserState>()(
         })),
     }),
     {
-      name: "user-store",
-    }
-  )
+      name: 'user-store',
+    },
+  ),
 );
 
 export default useUserStore;

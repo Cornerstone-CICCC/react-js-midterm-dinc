@@ -13,10 +13,6 @@ export const productSchema = z.object({
     .number()
     .min(0, 'Price must be a positive number')
     .max(1000000, 'Price must be less than 1,000,000'),
-  image: z
-    .array(z.string().url('Invalid image URL'))
-    .min(1, 'At least one image is required')
-    .max(5, 'Maximum 5 images allowed'),
   category: z.string().nonempty('Category is required'),
 });
 

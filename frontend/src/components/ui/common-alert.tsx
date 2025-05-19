@@ -5,7 +5,7 @@ interface CommonAlertProps {
   show: boolean;
   variant?: 'default' | 'destructive';
   title: string;
-  description?: string;
+  description: string;
 }
 
 function CommonAlert({

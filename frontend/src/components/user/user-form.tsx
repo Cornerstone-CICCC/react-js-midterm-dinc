@@ -15,26 +15,40 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFirebaseStorage } from '@/hooks/useFirebaseStorage';
 import ImageUpload from './image-upload';
 import useUserStore from '@/stores/useUserStore';
 import { User } from '@/types/user';
+import { useUser } from '@/hooks/useUser';
+import { CommonAlert } from '../ui/common-alert';
 
 const UserProfileForm = () => {
   const { user, setUser } = useUserStore();
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const { uploadImage } = useFirebaseStorage();
+  const { onSubmit, loading, showError, errorMessage } = useUser(user?.id);
 
   const form = useForm<UserFormInputs>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: user?.name || '',
-      userName: user?.userName || '',
-      bio: user?.bio || '',
-      location: user?.location || '',
+      name: '',
+      userName: '',
+      bio: '',
+      location: '',
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user.name || '',
+        userName: user.userName || '',
+        bio: user.bio || '',
+        location: user.location || '',
+      });
+    }
+  }, [user, form]);
 
   const bioValue = form.watch('bio');
   const bioLength = bioValue?.length || 0;
@@ -67,13 +81,14 @@ const UserProfileForm = () => {
         location: data.location,
         userName: data.userName,
         fileId: imageUrl,
+        email: user.email,
       };
 
-      // const res = await onSubmit(updatedUser);
+      const res = await onSubmit(updatedUser);
 
-      // if (!res) {
-      //   throw new Error('Failed to update user');
-      // }
+      if (!res) {
+        throw new Error('Failed to update user');
+      }
 
       setUser(updatedUser);
     } catch (err) {
@@ -82,10 +97,22 @@ const UserProfileForm = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4">
+    <div className="max-w-xl mx-auto py-20">
       <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
 
-      <ImageUpload image={user?.fileId || '/default-profile.png'} onFileSelect={setUploadedImage} />
+      <div className="mb-6">
+        <CommonAlert
+          show={showError}
+          variant="destructive"
+          title="Error"
+          description={errorMessage}
+        />
+      </div>
+
+      <ImageUpload
+        image={user?.fileId || '/default-profile.png'}
+        onFileSelect={setUploadedImage}
+      />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSave)} className="space-y-8">
@@ -173,9 +200,12 @@ const UserProfileForm = () => {
               </FormItem>
             )}
           />
-          {/* TODO: loading state */}
-          <Button className="w-full p-6 font-bold" type="submit">
-            Save
+          <Button
+            className="w-full p-6 font-bold"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? 'Saving...' : 'Save'}
           </Button>
         </form>
       </Form>
