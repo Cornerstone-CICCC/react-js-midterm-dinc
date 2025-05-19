@@ -1,7 +1,7 @@
 import { User } from './user';
 
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   description: string;

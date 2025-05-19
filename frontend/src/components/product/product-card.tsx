@@ -10,7 +10,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/product/${product.id}`);
+    router.push(`/product/${product._id}`);
   };
 
   return (
@@ -20,7 +20,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     >
       <div className="relative aspect-square rounded bg-gray-200">
         <Image
-          src={product.imageUrl}
+          src={product.imageUrls[0]}
           alt={product.name}
           fill
           className="object-contain p-1"
