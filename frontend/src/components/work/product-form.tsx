@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { ProductFormInputs, productSchema } from '@/schemas/productSchema';
@@ -22,7 +22,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useWork } from '@/hooks/useWork';
-import { HttpRequestProductData } from '@/types/product';
+import { Product } from '@/types/product';
 import { CommonAlert } from '@/components/ui/common-alert';
 import { useFirebaseStorage } from '@/hooks/useFirebaseStorage';
 import useUserStore from '@/stores/useUserStore';
@@ -39,17 +39,28 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
     useWork();
   const { uploadImage } = useFirebaseStorage();
   const { user } = useUserStore();
-  const { product, setProduct } = useProductStore();
+  const { product } = useProductStore();
 
   const form = useForm<ProductFormInputs>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      title: isEditMode ? product?.name : '',
-      description: isEditMode ? product?.description : '',
-      price: isEditMode ? product?.price : 0,
-      category: isEditMode ? product?.category : '',
+      title: '',
+      description: '',
+      price: 0,
+      category: '',
     },
   });
+
+  useEffect(() => {
+    if (isEditMode && product) {
+      form.reset({
+        title: product.name || '',
+        description: product.description || '',
+        price: product.price || 0,
+        category: product.categorySlug || '',
+      });
+    }
+  }, [isEditMode, product, form]);
 
   const onDrop = (acceptedFiles: File[]) => {
     if (uploadedImages.length + acceptedFiles.length > MAX_IMAGES) {
@@ -102,17 +113,16 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
       );
     });
 
-    const newProduct: HttpRequestProductData = {
+    const newProduct: Partial<Product> = {
       name: data.title,
       price: data.price,
       description: data.description,
       imageUrls: imageUrls,
-      category: data.category,
+      categorySlug: data.category,
     };
 
     if (isEditMode && product) {
       updateWork(product.id, newProduct);
-      setProduct(null);
     } else {
       createWork(newProduct);
     }

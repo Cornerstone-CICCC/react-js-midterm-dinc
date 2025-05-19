@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import useSWR, { mutate } from 'swr';
-import { HttpRequestProductData, Product } from '@/types/product';
-import { User } from '@/types/user';
-import { useProductStore } from '@/store/productStore';
+import { Product } from '@/types/product';
+import useProductStore from '@/stores/useProductStore';
 
 interface useWorkType {
-  createWork: (data: HttpRequestProductData) => Promise<boolean>;
-  updateWork: (id: string, data: HttpRequestProductData) => Promise<boolean>;
+  createWork: (data: Partial<Product>) => Promise<boolean>;
+  updateWork: (id: string, data: Partial<Product>) => Promise<boolean>;
+  deleteWork: (id: string) => Promise<boolean>;
   loading: boolean;
   showError: boolean;
   errorMessage: string;
-  productData: Product | undefined;
-  userData: User | undefined;
+  data: Product | undefined;
   error: Error | undefined;
   isFetching: boolean;
 }
@@ -30,27 +29,37 @@ const fetcher = async (url: string) => {
   return data;
 };
 
-export const useWork = (productId: string | undefined): useWorkType => {
+export const useWork = (productId?: string): useWorkType => {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-  const setProduct = useProductStore((state) => state.setProduct);
+  const { setProduct } = useProductStore();
 
   const {
     data,
     error,
     isLoading: isFetching,
-  } = useSWR<Product>(`${apiBaseUrl}/products/${productId}`, fetcher, {
-    onSuccess: (data) => {
-      setProduct(data);
+  } = useSWR<Product>(
+    productId ? `${apiBaseUrl}/products/${productId}` : null,
+    fetcher,
+    {
+      onSuccess: (data) => {
+        if (data) {
+          setProduct(data);
+        }
+      },
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000, // 1分間は重複リクエストを防ぐ
     },
-  });
+  );
 
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   // Create a new work
-  const createWork = async (data: HttpRequestProductData) => {
+  const createWork = async (data: Partial<Product>) => {
     setLoading(true);
+    console.log(data);
 
     try {
       const res = await fetch(`${apiBaseUrl}/products`, {
@@ -72,6 +81,7 @@ export const useWork = (productId: string | undefined): useWorkType => {
 
       if (res.ok && result) {
         setShowError(false);
+        setProduct(result);
         mutate(`${apiBaseUrl}/products`);
       }
 
@@ -86,9 +96,9 @@ export const useWork = (productId: string | undefined): useWorkType => {
   };
 
   // Update a work
-  const updateWork = async (id: string, data: HttpRequestProductData) => {
+  const updateWork = async (id: string, data: Partial<Product>) => {
     setLoading(true);
-
+    console.log(id, data);
     try {
       const res = await fetch(`${apiBaseUrl}/products/${id}`, {
         method: 'PUT',
@@ -109,6 +119,7 @@ export const useWork = (productId: string | undefined): useWorkType => {
 
       if (res.ok && result) {
         setShowError(false);
+        setProduct(result);
         mutate(`${apiBaseUrl}/products`);
       }
 
@@ -122,14 +133,44 @@ export const useWork = (productId: string | undefined): useWorkType => {
     }
   };
 
+  // Delete a work
+  const deleteWork = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiBaseUrl}/products/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        setErrorMessage('Failed to delete work');
+        setShowError(true);
+        return false;
+      }
+
+      if (res.ok) {
+        setProduct(null);
+        mutate(`${apiBaseUrl}/products`);
+      }
+
+      return true;
+    } catch (err) {
+      console.log(err, 'failed deleting work');
+      setShowError(true);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     createWork,
     updateWork,
+    deleteWork,
     loading,
     showError,
     errorMessage,
-    productData: data,
-    userData: undefined,
+    data,
     error,
     isFetching,
   };
