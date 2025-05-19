@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import { useSearchContext } from '@/context/SearchContext';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { slugToTitle, tilteToSlug } from '@/lib/utils';
 
 const SearchSidebar = () => {
   const router = useRouter();
@@ -27,21 +28,30 @@ const SearchSidebar = () => {
     'groceries',
   ];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setSearchInput(e.target.value);
+  const handleChange = (
+    param: string,
+    e: React.ChangeEvent<HTMLInputElement> | string,
+  ) => {
+    if (param === 'search') {
+      setSearchInput(param);
+    }
+    if (param === 'category') {
+      handleCategory(e as string);
+    }
+    const value = typeof e === 'string' ? e : e.target.value.trim();
+    console.log('value', value);
 
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    const value = e.target.value.trim();
 
     if (!value) {
-      current.delete('search');
+      current.delete(param);
     } else {
-      current.set('search', e.target.value);
+      current.set(param, value);
     }
 
     const search = current.toString();
     const query = search ? `?${search}` : '';
+    console.log('current', query);
 
     router.replace(`/${query}`);
     return;
@@ -61,7 +71,7 @@ const SearchSidebar = () => {
           type="text"
           value={searchInput}
           name="search"
-          onChange={handleChange}
+          onChange={(e) => handleChange('search', e)}
           placeholder="Search..."
           className="shadow-[0_0_1px] rounded-3xl w-full py-2 pl-4 pr-9"
         />
@@ -78,7 +88,7 @@ const SearchSidebar = () => {
           {categoriesList.map((category) => (
             <div
               key={category}
-              onClick={() => handleCategory(category)}
+              onClick={() => handleChange('category', tilteToSlug(category))}
               className={`p-4 rounded-lg cursor-pointer max-w-[150px] hover:scale-110 transition ${selectedCategory === category ? 'bg-black text-white' : 'bg-gray-300'}`}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}

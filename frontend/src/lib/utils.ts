@@ -15,8 +15,6 @@ export function slugToTitle(slug: string) {
 
 export function tilteToSlug(slug: string) {
   const words = slug.split(' ');
-  const title = words
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('-');
+  const title = words.map((word) => word.toLowerCase()).join('-');
   return title;
 }
