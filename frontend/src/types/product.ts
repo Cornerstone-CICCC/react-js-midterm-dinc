@@ -5,10 +5,19 @@ export interface Product {
   userId: string;
   description: string;
   imageUrl: string;
-  categoryId: string;
-  status: boolean;
+  status: string;
+  categorySlug: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface HttpRequestProductData {
+  name: string;
+  price: number;
+  description: string;
+  imageUrl: string;
+  categoryId: string;
+  userId?: string;
 }
 
 export interface ProductCategory {

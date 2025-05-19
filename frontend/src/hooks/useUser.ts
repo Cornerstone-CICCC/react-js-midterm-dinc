@@ -42,7 +42,6 @@ export function useUser(userId: string | undefined): useUserType {
     setLoading(true);
 
     try {
-      
       const res = await fetch(`${apiBaseUrl}/users/${data.id}`, {
         method: 'PATCH',
         headers: {
