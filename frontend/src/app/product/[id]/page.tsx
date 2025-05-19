@@ -107,7 +107,7 @@ const ProductDetail = () => {
               <AvatarFallback>S</AvatarFallback>
             </Avatar>
             <p className="truncate font-semibold">
-              <Link href={`/profile/${productItem.userId}`}>
+              <Link href={`/user/${productItem.userId}`}>
                 {productItem.userId}
               </Link>
             </p>
@@ -115,7 +115,7 @@ const ProductDetail = () => {
 
           {/** below button will be show only when seller and user is same. */}
           <Button className="w-full" size={'lg'} asChild>
-            <Link href={`/work/1/edit`}>
+            <Link href={`/work/edit/${productItem.id}`}>
               <span className="uppercase">Edit</span>
             </Link>
           </Button>
