@@ -108,16 +108,19 @@ export const createProduct = async (
 };
 
 export const updateProduct = async (
-  req: Request,
+  req: RequestWithUser,
   res: Response,
   next: NextFunction,
 ) => {
   try {
+    // status
+    // categorySlug
+    const userId = req.user?.id;
     const productId = req.params.id;
-    const { name, price, description, imageUrl, categoryId } = req.body;
+    const { name, price, description, imageUrls, category } = req.body;
     const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      { name, price, description, imageUrl, categoryId },
+      { _id: new mongoose.Types.ObjectId(productId), userId },
+      { name, price, description, imageUrls, categorySlug: category },
       { new: true },
     );
     if (!updatedProduct) {
