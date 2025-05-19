@@ -84,11 +84,11 @@ const LoginForm = ({ login, loading, setError }: LoginFormProps) => {
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? (
             <>
-              <span>Signing in</span>
+              <span>Logging in</span>
               <span className="ml-2 inline-block animate-spin">⟳</span>
             </>
           ) : (
-            "Sign in"
+            "Log in"
           )}
         </Button>
 
