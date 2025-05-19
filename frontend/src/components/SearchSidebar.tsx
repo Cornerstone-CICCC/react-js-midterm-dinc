@@ -34,9 +34,6 @@ const SearchSidebar = () => {
     param: string,
     e: React.ChangeEvent<HTMLInputElement> | string,
   ) => {
-    if (param === 'search') {
-      setSearchInput(param);
-    }
     if (param === 'category') {
       handleCategory(e as string);
     }
@@ -62,7 +59,6 @@ const SearchSidebar = () => {
 
     const qString = current.toString();
     const query = qString ? `?${qString}` : '';
-    console.log('current', query);
 
     router.replace(`/${query}`);
     return;
@@ -82,7 +78,10 @@ const SearchSidebar = () => {
           type="text"
           value={searchInput}
           name="search"
-          onChange={(e) => handleChange('search', e)}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            handleChange('search', e);
+          }}
           placeholder="Search..."
           className="shadow-[0_0_1px] rounded-3xl w-full py-2 pl-4 pr-9"
         />
