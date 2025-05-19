@@ -3,10 +3,12 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { SearchProvider, useSearchContext } from '@/context/SearchContext';
 import Image from 'next/image';
+import { useInView } from 'react-intersection-observer';
 import SearchSidebar from '@/components/SearchSidebar';
 import { useSearchParams } from 'next/navigation';
 import { slugToTitle } from '@/lib/utils';
 import { Spinner } from '@/components/ui/spinner';
+import { set } from 'zod';
 
 interface Product {
   _id: number;
@@ -24,35 +26,69 @@ const HomeChild = () => {
   const { searchInput, setSearch, selectedCategory } = useSearchContext();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchRef, setFetchRef] = useState(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [ref, inView, entry] = useInView({
+    threshold: 0,
+  });
+  // const [pagination, setPagination] = useState({
+  //   page: 1,
+  //   limit: 10,
+  //   total: 0,
+  //   totalPages: 0,
+  // });
 
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
 
-  const fetchProducts = async (query: string, category?: string) => {
+  const fetchProducts = async () => {
     try {
-      console.log('Fetching products with query:', query);
-      const res = await fetch(
-        `http://localhost:4500/products/search?search=${query}&category=${category || ''}`,
+      const req = await fetch(
+        `http://localhost:4500/products/search?search=${searchInput}&category=${selectedCategory || ''}&page=${
+          page
+        }&limit=${limit}`,
       );
-      const { data } = await res.json();
-      setProducts(data);
-      console.log(data);
+      const res = await req.json();
+      const data = res.data;
+      const newPagintaion = res.pagination;
+      setProducts((prev) => [...prev, ...data]);
+      setTotal(newPagintaion.total);
+      // setPage((prev) => (prev += 1));
+      setTotalPages(Math.ceil(newPagintaion.total / limit));
     } catch (error) {
       console.error('Error fetching products:', error);
     }
   };
 
-  // useEffect(() => {
-  //   fetchProducts(searchQuery);
-  // }, []);
+  useEffect(() => {
+    if (loading) return;
+    if (inView && page <= totalPages) {
+      console.log('inView', inView);
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
+        fetchProducts();
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [inView]);
 
   useEffect(() => {
+    if (loading) return;
+    setProducts([]);
+    setPage(1);
+    setTotal(0);
+    setTotalPages(0);
+    setLimit(10);
     setLoading(true);
-    const timer = setTimeout(() => {
+    setTimeout(async () => {
+      await fetchProducts();
       setLoading(false);
-      fetchProducts(searchInput, selectedCategory);
-    }, 1000);
-    return () => clearTimeout(timer);
+    }, 0);
+    console.log('selectedCategory', selectedCategory);
   }, [searchInput, selectedCategory]);
 
   return (
@@ -86,6 +122,7 @@ const HomeChild = () => {
                 </Link>
               ))
             : null}
+          <div ref={ref} className="h-20 w-full"></div>
           {loading && (
             <div className="fixed top-0 left-0 bg-gray-100/40 rounded-md flex items-center justify-center w-full h-screen">
               <Spinner size={'large'}>Loading products...</Spinner>

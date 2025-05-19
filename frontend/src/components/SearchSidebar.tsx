@@ -15,7 +15,6 @@ const SearchSidebar = () => {
 
   useEffect(() => {
     setSearchInput(searchQuery);
-    handleCategory(categoryQuery);
   }, [searchQuery, setSearchInput]);
 
   const categoriesList = [
@@ -34,13 +33,7 @@ const SearchSidebar = () => {
     param: string,
     e: React.ChangeEvent<HTMLInputElement> | string,
   ) => {
-    if (param === 'category') {
-      handleCategory(e as string);
-    }
-
     const value = typeof e === 'string' ? (e as string) : e.target.value.trim();
-    console.log('value', value);
-
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (param === 'category') {
