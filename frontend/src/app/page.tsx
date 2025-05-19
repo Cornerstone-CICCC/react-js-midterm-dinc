@@ -3,6 +3,7 @@
 import SearchSidebar from '@/components/SearchSidebar';
 import { Product } from '@/types/product';
 import ProductList from '@/components/product/product-list';
+import HomeSkeleton from '@/components/home-skeleton';
 
 const products: Product[] = [
   {
@@ -86,6 +87,11 @@ const products: Product[] = [
 ];
 
 const Home = () => {
+  const productSkeleton = true;
+
+  if (!productSkeleton) {
+    return <HomeSkeleton />;
+  }
   return (
     <div className="md:flex w-full pt-10 px-3 md:pt-20 md:px-5">
       <SearchSidebar />
