@@ -1,18 +1,21 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { useGoogleAuth } from '@/hooks/useGoogleAuth'
 
 export default function AuthCallback() {
-  const [message, setMessage] = useState('Authenticating...');
+  const [message, setMessage] = useState('Authenticating with Google...');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { googleAuth } = useGoogleAuth();
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        const callbackUrl = searchParams.get('callbackUrl') || '/';
+
         const supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL || '',
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
@@ -26,7 +29,7 @@ export default function AuthCallback() {
         }
 
         if (!session.user.email) {
-          console.error('Email is required for signup');
+          console.error('Email is required');
           return;
         }
 
@@ -43,7 +46,9 @@ export default function AuthCallback() {
           return;
         }
 
-        router.push('/');
+        console.log('Redirecting to:', callbackUrl);
+        router.push(callbackUrl);
+
       } catch (error) {
         console.error('Authentication error:', error);
         setMessage('An error occurred during authentication');

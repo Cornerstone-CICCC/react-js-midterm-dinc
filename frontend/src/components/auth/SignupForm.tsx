@@ -108,7 +108,7 @@ const SignupForm = ({ signup, loading, setError }: SignupFormProps) => {
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link href="/login" className="text-[#323232] hover:underline">
-              Sign in
+              Log in
             </Link>
           </p>
         </div>
