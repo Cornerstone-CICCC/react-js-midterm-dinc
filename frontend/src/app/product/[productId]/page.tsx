@@ -11,6 +11,8 @@ import { useState, use, useEffect } from 'react';
 import { useWork } from '@/hooks/useWork';
 import useUserStore from '@/stores/useUserStore';
 import { Suspense } from 'react';
+import { CommonAlert } from '@/components/ui/common-alert';
+import ProductSkeleton from '@/components/product/product-detail-skeleton';
 
 type PageParams = {
   productId: string;
@@ -38,9 +40,21 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
   // const today = Date.now() / 1000;
   // const diff = data?.updatedAt.getTime() / 1000;
 
+  if (isFetching) {
+    return <ProductSkeleton />;
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="p-5 md:p-20">
+        <div className="mb-6">
+          <CommonAlert
+            show={error ? true : false}
+            variant="destructive"
+            title="Error"
+            description="Fail to get product data."
+          />
+        </div>
         <div className="flex flex-col gap-10 lg:flex-row">
           <div className="">
             <div className="space-y-3">
