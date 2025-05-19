@@ -4,6 +4,7 @@ import ProductSkeleton from '@/components/product/product-skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { CommonAlert } from '@/components/ui/common-alert';
 import { cn } from '@/lib/utils';
 import { DotIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -52,8 +53,17 @@ const ProductDetail = () => {
   if (!product) {
     return <ProductSkeleton />;
   }
+
   return (
     <div className="p-5 md:p-20">
+      <div className="mb-6">
+        <CommonAlert
+          show={true}
+          variant="destructive"
+          title="Error"
+          description="Fail to get product data."
+        />
+      </div>
       <div className="flex flex-col gap-10 lg:flex-row">
         <div className="">
           <div className="space-y-3">
