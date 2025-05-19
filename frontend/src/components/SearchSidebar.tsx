@@ -31,13 +31,13 @@ const SearchSidebar = () => {
         <div className="flex justify-between pr-4 md:my-4 max-md:my-2">
           <h2 className="text-2xl">Categories</h2>
         </div>
-        <div className="md:grid grid-cols-2 gap-4 mt-4 flex max-md:overflow-scroll max-md:pb-4">
+        <div className="mt-4 flex md:block max-md:overflow-scroll max-md:pb-4 md:-m-1.5">
           {CATEGORIES.map((cate) => (
             <Button
               key={cate}
               variant={'secondary'}
               size={'sm'}
-              className="text-xs truncate"
+              className={'m-1.5'}
             >
               {cate}
             </Button>
