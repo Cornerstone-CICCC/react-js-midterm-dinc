@@ -8,7 +8,6 @@ import SearchSidebar from '@/components/SearchSidebar';
 import { useSearchParams } from 'next/navigation';
 import { slugToTitle } from '@/lib/utils';
 import { Spinner } from '@/components/ui/spinner';
-import { set } from 'zod';
 
 interface Product {
   _id: number;
@@ -23,14 +22,15 @@ interface Product {
 }
 
 const HomeChild = () => {
-  const { searchInput, setSearch, selectedCategory } = useSearchContext();
+  const { searchInput, setSearch, selectedCategory, handleCategory } =
+    useSearchContext();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-  const [fetchRef, setFetchRef] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+
   const [ref, inView, entry] = useInView({
     threshold: 0,
   });
@@ -43,6 +43,7 @@ const HomeChild = () => {
 
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
+  const searchCategory = searchParams.get('category') || '';
 
   const fetchProducts = async () => {
     try {
@@ -64,13 +65,22 @@ const HomeChild = () => {
   };
 
   useEffect(() => {
+    if (searchQuery && !searchInput.length) {
+      setSearch(searchQuery);
+    }
+
+    if (searchCategory && !selectedCategory.length) {
+      handleCategory(searchCategory);
+    }
+  }, [searchQuery, searchCategory]);
+
+  useEffect(() => {
     if (loading) return;
     if (inView && page <= totalPages) {
-      console.log('inView', inView);
       setLoading(true);
       const timer = setTimeout(() => {
         setLoading(false);
-        fetchProducts();
+        setPage((prev) => (prev += 1));
       }, 0);
       return () => clearTimeout(timer);
     }
@@ -84,12 +94,21 @@ const HomeChild = () => {
     setTotalPages(0);
     setLimit(10);
     setLoading(true);
+    if (page === 1) {
+      setTimeout(async () => {
+        await fetchProducts();
+        setLoading(false);
+      }, 100);
+    }
+    console.log('selectedCategory', selectedCategory);
+  }, [searchInput, selectedCategory]);
+
+  useEffect(() => {
     setTimeout(async () => {
       await fetchProducts();
       setLoading(false);
-    }, 0);
-    console.log('selectedCategory', selectedCategory);
-  }, [searchInput, selectedCategory]);
+    }, 100);
+  }, [page]);
 
   return (
     <div className="flex w-full md:ml-[260px] pb-6 relative">
