@@ -15,9 +15,9 @@ export interface HttpRequestProductData {
   name: string;
   price: number;
   description: string;
-  imageUrl: string;
-  categoryId: string;
-  userId?: string;
+  imageUrls: string[];
+  category: string;
+  status?: string;
 }
 
 export interface ProductCategory {

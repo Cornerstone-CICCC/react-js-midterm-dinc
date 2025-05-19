@@ -26,6 +26,7 @@ import { HttpRequestProductData } from '@/types/product';
 import { CommonAlert } from '@/components/ui/common-alert';
 import { useFirebaseStorage } from '@/hooks/useFirebaseStorage';
 import useUserStore from '@/stores/useUserStore';
+import useProductStore from '@/stores/useProductStore';
 
 interface ProductFormProps {
   isEditMode?: boolean;
@@ -34,9 +35,11 @@ interface ProductFormProps {
 
 const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-  const { createWork, loading, showError, errorMessage } = useWork();
+  const { createWork, loading, showError, errorMessage, updateWork } =
+    useWork();
   const { uploadImage } = useFirebaseStorage();
   const { user } = useUserStore();
+  const { product, setProduct } = useProductStore();
 
   const form = useForm<ProductFormInputs>({
     resolver: zodResolver(productSchema),
@@ -91,9 +94,8 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
       return;
     }
 
-    const imageUrls: string[] = [];
-
     // Upload images to Firebase Storage
+    const imageUrls: string[] = [];
     uploadedImages.forEach(async (image) => {
       imageUrls.push(
         await uploadImage(image, `products/${user.id}/${data.title}`),
@@ -102,13 +104,18 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
 
     const newProduct: HttpRequestProductData = {
       name: data.title,
-      description: data.description,
       price: data.price,
-      categoryId: '1',
-      imageUrl: imageUrls[0],
+      description: data.description,
+      imageUrls: imageUrls,
+      category: data.category,
     };
 
-    createWork(newProduct);
+    if (isEditMode && product) {
+      updateWork(product.id, newProduct);
+      setProduct(null);
+    } else {
+      createWork(newProduct);
+    }
   };
 
   return (
