@@ -1,79 +1,107 @@
 'use client';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { SearchProvider, useSearchContext } from '@/context/SearchContext';
-import Image from 'next/image';
+
 import SearchSidebar from '@/components/SearchSidebar';
-import { useSearchParams } from 'next/navigation';
+import { Product } from '@/types/product';
+import ProductList from '@/components/product/product-list';
+import HomeSkeleton from '@/components/home-skeleton';
 
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  thumbnail: string;
-  category: string;
-  stock: number;
-}
-
-const HomeChild = () => {
-  const { search, setSearch, selectedCategory } = useSearchContext();
-  const [products, setProducts] = useState<Product[]>([]);
-
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get('search') || '';
-
-  const fetchProducts = async (query: string) => {
-    try {
-      const res = await fetch(query.trim() ? `https://dummyjson.com/products/search?q=${query}` : 'https://dummyjson.com/products?limit=200');
-      const data = await res.json();
-      setProducts(data.products);
-      console.log(data.products);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  }
-
-  useEffect(() => {
-    if (search.trim() !== '') {
-      fetchProducts(search);
-    } else {
-      fetchProducts('');
-    }
-  }, [search]);
-
-  useEffect(() => {
-    setSearch(searchQuery);
-  }, [searchQuery, setSearch]);
-
-  return (
-    <div className='flex w-full md:ml-[260px] pb-6'>
-      <div className='grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4 w-full p-2 max-md:mt-48'>
-        {products.filter(product => selectedCategory === '' || selectedCategory === product.category.toLowerCase()).map((product) => (
-          <Link href={`/products/${product.id}`} key={product.id}>
-            <div className='border p-4 min-h-[270px] shadow-md rounded-md hover:scale-105 transition max-w-[300px]'>
-              <div className='relative size-[150px]'>
-                <Image src={product.thumbnail} alt='no image' fill sizes='(max-width: 768px) 100px, 150px' />
-              </div>
-              <h2 className='line-clamp-2 text-sm text-gray-500 mb-2'>{product.title}</h2>
-              <p>${product.price}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  )
-}
+const products: Product[] = [
+  {
+    id: '1',
+    userId: '1',
+    name: 'Modern Table',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
+    price: 299,
+    imageUrl: '/product1.png',
+    categoryId: 'home',
+    status: true,
+    createdAt: '2025-02-19T22:46:11.813532',
+    updatedAt: '2025-05-18T22:46:11.813550',
+  },
+  {
+    id: '2',
+    userId: '2',
+    name: 'Coffee',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
+    price: 299,
+    imageUrl: '/product2.png',
+    categoryId: 'home',
+    status: true,
+    createdAt: '2025-02-19T22:46:11.813532',
+    updatedAt: '2025-05-18T22:46:11.813550',
+  },
+  {
+    id: '3',
+    userId: '2',
+    name: 'Coffee',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
+    price: 299,
+    imageUrl: '/product2.png',
+    categoryId: 'home',
+    status: true,
+    createdAt: '2025-02-19T22:46:11.813532',
+    updatedAt: '2025-05-18T22:46:11.813550',
+  },
+  {
+    id: '4',
+    userId: '3',
+    name: 'Coffee',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
+    price: 299,
+    imageUrl: '/product2.png',
+    categoryId: 'home',
+    status: true,
+    createdAt: '2025-02-19T22:46:11.813532',
+    updatedAt: '2025-05-18T22:46:11.813550',
+  },
+  {
+    id: '5',
+    userId: '6',
+    name: 'Coffee',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
+    price: 299,
+    imageUrl: '/product3.png',
+    categoryId: 'home',
+    status: true,
+    createdAt: '2025-02-19T22:46:11.813532',
+    updatedAt: '2025-05-18T22:46:11.813550',
+  },
+  {
+    id: '6',
+    userId: '6',
+    name: 'Coffee',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus inventore tenetur, provident repellat, omnis perspiciatis, nostrum quidem dolores blanditiis atque delectus accusantium veritatis eaque odit? Aliquid, nihil nostrum! Rem, porro.',
+    price: 299,
+    imageUrl: '/product3.png',
+    categoryId: 'home',
+    status: true,
+    createdAt: '2025-02-19T22:46:11.813532',
+    updatedAt: '2025-05-18T22:46:11.813550',
+  },
+];
 
 const Home = () => {
+  const productSkeleton = true;
+
+  if (!productSkeleton) {
+    return <HomeSkeleton />;
+  }
   return (
-    <div className='md:flex w-full'>
-      <SearchProvider>
-        <SearchSidebar />
-        <HomeChild />
-      </SearchProvider>
+    <div className="md:flex w-full pt-10 px-3 md:pt-20 md:px-5">
+      <SearchSidebar />
+      <div className="flex w-full md:ml-[250px] pb-6">
+        <div className="w-full mt-40 md:mt-0">
+          <ProductList products={products} />
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default Home;

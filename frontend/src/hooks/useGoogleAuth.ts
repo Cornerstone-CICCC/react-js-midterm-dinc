@@ -2,23 +2,23 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/stores/useUserStore";
 
-type SignupValue = {
+type Params = {
   email: string;
   password: string;
 }
 
-export const useSignup = () => {
+export const useGoogleAuth = () => {
   const router = useRouter();
   const { setUser } = useUserStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const signup = async (data: SignupValue) => {
+  const googleAuth = async (data: Params) => {
     setLoading(true);
     setError("");
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -49,7 +49,7 @@ export const useSignup = () => {
   };
 
   return {
-    signup,
+    googleAuth,
     loading,
     error,
     setError
