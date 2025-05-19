@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useLogout } from '@/hooks/useLogout';
 import useUserStore from '@/stores/useUserStore';
 import { HomeIcon, LogIn, LogOut, Plus, UserRound } from 'lucide-react';
 import Link from 'next/link';
@@ -27,8 +28,14 @@ const Header = () => {
   const isMobile = useIsMobile();
   const [mounted, setMoundted] = useState(false);
 
+  const { logout } = useLogout();
+
   const handleLogout = async () => {
-    // logout
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   useEffect(() => {

@@ -15,7 +15,7 @@ import {
 import { SignupFormValues, signupSchema } from "@/schemas/authSchemas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import GoogleButton from "./GoogleButton";
+import GoogleAuth from "./GoogleAuth";
 
 type SignupFormProps = {
   signup: (data: SignupFormValues) => Promise<boolean>;
@@ -104,9 +104,7 @@ const SignupForm = ({ signup, loading, setError }: SignupFormProps) => {
               <span className="bg-white px-2 text-muted-foreground">or</span>
             </div>
           </div>
-
-          <GoogleButton />
-
+          <GoogleAuth type="signup" />
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link href="/login" className="text-[#323232] hover:underline">
