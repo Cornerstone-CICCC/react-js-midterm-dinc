@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { loginSchema, LoginFormValues } from "@/schemas/authSchemas";
-import GoogleButton from "./GoogleButton";
+import GoogleAuth from "./GoogleAuth";
 
 type LoginFormProps = {
   login: (data: LoginFormValues) => Promise<boolean>;
@@ -100,8 +100,7 @@ const LoginForm = ({ login, loading, setError }: LoginFormProps) => {
             <span className="bg-white px-2 text-muted-foreground">or</span>
           </div>
         </div>
-
-        <GoogleButton />
+        <GoogleAuth type="login" />
       </form>
     </Form>
   );
