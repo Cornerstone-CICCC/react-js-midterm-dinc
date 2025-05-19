@@ -81,10 +81,7 @@ const Header = () => {
                 <Link href={`/profile`}>
                   <Avatar className="flex items-center justify-center">
                     {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-                    <AvatarImage
-                      src={'https://github.com/shadcn.png'}
-                      className="object-cover"
-                    />
+                    <AvatarImage src={user?.fileId} className="object-cover" />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <span className="sr-only">Profile</span>
