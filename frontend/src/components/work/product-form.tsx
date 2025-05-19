@@ -67,7 +67,17 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
       alert(`You can only upload up to ${MAX_IMAGES} images`);
       return;
     }
-    setUploadedImages((prev) => [...prev, ...acceptedFiles]);
+
+    const validFiles = acceptedFiles.filter((file) => {
+      const extension = file.name.toLowerCase().split('.').pop();
+      return ['jpeg', 'jpg', 'png'].includes(extension || '');
+    });
+
+    if (validFiles.length !== acceptedFiles.length) {
+      alert('Only JPEG and PNG files are allowed');
+    }
+
+    setUploadedImages((prev) => [...prev, ...validFiles]);
   };
 
   const removeImage = (file: File) => {
@@ -105,11 +115,14 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
       return;
     }
 
+    // ファイル名からスペースを削除し、ハイフンに置き換える
+    const sanitizedTitle = data.title.replace(/\s+/g, '-').toLowerCase();
+
     // Upload images to Firebase Storage
     const imageUrls: string[] = [];
     uploadedImages.forEach(async (image) => {
       imageUrls.push(
-        await uploadImage(image, `products/${user.id}/${data.title}`),
+        await uploadImage(image, `products/${user.id}/${sanitizedTitle}`),
       );
     });
 
