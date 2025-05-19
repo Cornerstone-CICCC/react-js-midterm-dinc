@@ -3,17 +3,19 @@ import { Search } from 'lucide-react';
 import { useSearchContext } from '@/context/SearchContext';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { slugToTitle, tilteToSlug } from '@/lib/utils';
+import { tilteToSlug } from '@/lib/utils';
 
 const SearchSidebar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
+  const categoryQuery = searchParams.get('category') || '';
   const { searchInput, setSearchInput, selectedCategory, handleCategory } =
     useSearchContext();
 
   useEffect(() => {
     setSearchInput(searchQuery);
+    handleCategory(categoryQuery);
   }, [searchQuery, setSearchInput]);
 
   const categoriesList = [
@@ -38,19 +40,28 @@ const SearchSidebar = () => {
     if (param === 'category') {
       handleCategory(e as string);
     }
-    const value = typeof e === 'string' ? e : e.target.value.trim();
+
+    const value = typeof e === 'string' ? (e as string) : e.target.value.trim();
     console.log('value', value);
 
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
-    if (!value) {
-      current.delete(param);
+    if (param === 'category') {
+      if (value === selectedCategory) {
+        current.delete('category');
+      } else {
+        current.set(param, value);
+      }
     } else {
-      current.set(param, value);
+      if (!value) {
+        current.delete(param);
+      } else {
+        current.set(param, value);
+      }
     }
 
-    const search = current.toString();
-    const query = search ? `?${search}` : '';
+    const qString = current.toString();
+    const query = qString ? `?${qString}` : '';
     console.log('current', query);
 
     router.replace(`/${query}`);
@@ -88,7 +99,10 @@ const SearchSidebar = () => {
           {categoriesList.map((category) => (
             <div
               key={category}
-              onClick={() => handleChange('category', tilteToSlug(category))}
+              onClick={() => {
+                handleCategory(category);
+                handleChange('category', tilteToSlug(category));
+              }}
               className={`p-4 rounded-lg cursor-pointer max-w-[150px] hover:scale-110 transition ${selectedCategory === category ? 'bg-black text-white' : 'bg-gray-300'}`}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
