@@ -40,7 +40,7 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
   // const today = Date.now() / 1000;
   // const diff = data?.updatedAt.getTime() / 1000;
 
-  if (isFetching) {
+  if (isFetching || !data) {
     return <ProductSkeleton />;
   }
 
