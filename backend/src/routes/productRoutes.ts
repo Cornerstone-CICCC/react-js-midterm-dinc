@@ -7,14 +7,15 @@ import {
   getProducts,
   updateProduct,
 } from '../controllers/productController';
+import protect from '../middlewares/authMiddleware';
 
 const router = Router();
 
 router.get('/', getProducts);
 router.get('/search', getProductList);
 router.get('/:id', getProductById);
-router.post('/', createProduct);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
+router.post('/', protect, createProduct);
+router.put('/:id', protect, updateProduct);
+router.delete('/:id', protect, deleteProduct);
 
 export default router;

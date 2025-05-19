@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Product from '../models/productModel';
 import mongoose from 'mongoose';
+import { RequestWithUser } from '../middlewares/authMiddleware';
 
 export const getProducts = async (
   req: Request,
@@ -84,18 +85,19 @@ export const getProductById = async (
 };
 
 export const createProduct = async (
-  req: Request,
+  req: RequestWithUser,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { name, price, description, imageUrl, categoryId, userId } = req.body;
+    const userId = req.user?.id;
+    const { name, price, description, imageUrls, category } = req.body;
     const newProduct = new Product({
       name,
       price,
       description,
-      imageUrl,
-      categoryId,
+      imageUrls,
+      categorySlug: category,
       userId,
     });
     await newProduct.save();

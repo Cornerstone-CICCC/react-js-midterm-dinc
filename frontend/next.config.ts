@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   domains: ['cdn.dummyjson.com'],
-  }
 };
 
 export default nextConfig;
