@@ -44,10 +44,10 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
   const form = useForm<ProductFormInputs>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      price: 0,
-      category: '',
+      title: isEditMode ? product?.name : '',
+      description: isEditMode ? product?.description : '',
+      price: isEditMode ? product?.price : 0,
+      category: isEditMode ? product?.category : '',
     },
   });
 

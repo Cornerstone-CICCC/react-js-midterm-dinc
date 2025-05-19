@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { User, GetUserApiResponse } from '@/types/user';
 import useSWR, { mutate } from 'swr';
 
-type useUserType = {
-  user: User | undefined;
+interface useUserType {
+  userData: User | undefined;
   isLoading: boolean;
   isError: boolean;
   onSubmit: (data: User) => Promise<boolean>;
@@ -77,7 +77,7 @@ export function useUser(userId: string | undefined): useUserType {
   };
 
   return {
-    user: data,
+    userData: data,
     isLoading: isFetching,
     isError: !!error,
     onSubmit,

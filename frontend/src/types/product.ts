@@ -4,9 +4,9 @@ export interface Product {
   price: number;
   userId: string;
   description: string;
-  imageUrl: string;
+  imageUrls: string[];
   status: string;
-  categorySlug: string;
+  category: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,9 +19,3 @@ export interface HttpRequestProductData {
   category: string;
   status?: string;
 }
-
-export interface ProductCategory {
-  id: number;
-  name: string;
-}
-

@@ -13,7 +13,7 @@ type PageParams = {
 const UserPage = ({ params }: { params: Promise<PageParams> }) => {
   const resolvedParams = use(params);
   const { userId } = resolvedParams;
-  const { user, isLoading, isError } = useUser(userId);
+  const { userData, isLoading, isError } = useUser(userId);
 
   // TODO: get products
   const products: Product[] = [
@@ -31,7 +31,7 @@ const UserPage = ({ params }: { params: Promise<PageParams> }) => {
     },
   ];
 
-  if (!user || isError) {
+  if (!userData || isError) {
     return <div>User not found</div>;
   }
 
@@ -42,7 +42,7 @@ const UserPage = ({ params }: { params: Promise<PageParams> }) => {
   return (
     <div className="px-0 sm:px-10 lg:px-16 py-14">
       <Suspense fallback={<ProfileSkeleton isOwnProfile={false} />}>
-        <ProfileUI user={user} isOwnProfile={false} products={products} />
+        <ProfileUI user={userData} isOwnProfile={false} products={products} />
       </Suspense>
     </div>
   );
