@@ -20,8 +20,8 @@ const productSchema = new Schema(
       type: String,
       required: true,
     },
-    imageUrl: {
-      type: String,
+    imageUrls: {
+      type: Array<String>,
       required: true,
     },
     status: {

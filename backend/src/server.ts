@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: process.env.FRONT_URL || 'http://localhost:3000',
     credentials: true,
   }),
 );
@@ -27,8 +27,8 @@ app.get('/', (req: Request, res: Response) => {
   res.send('API Running');
 });
 app.use('/auth', authRouter);
-app.use('/users', userRouter);
 app.use('/products', productRouter);
+app.use('/users', userRouter);
 
 const PORT = process.env.PORT || 4500;
 
