@@ -126,8 +126,8 @@ const ProductList = ({
   }
 
   return (
-    <div className="w-full px-2">
-      <div className="flex max-w-full w-full flex-1 pb-18 md:pb-6 relative">
+    <div className="w-full p-2">
+      <div className="flex max-w-full w-full flex-1 md:pb-6 relative">
         <Suspense
           fallback={
             <div className="flex items-center justify-center w-full h-screen">

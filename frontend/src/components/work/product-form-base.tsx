@@ -134,7 +134,7 @@ export const ProductFormBase = ({
   };
 
   return (
-    <div className="max-w-xl mx-auto py-20">
+    <div className="max-w-xl mx-auto py-10 md:py-20">
       <h1 className="text-3xl font-bold mb-6 text-center">
         {initialData ? 'Edit listing' : 'Create listing'}
       </h1>

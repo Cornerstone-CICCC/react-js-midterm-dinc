@@ -97,7 +97,7 @@ const UserProfileForm = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto py-20">
+    <div className="max-w-xl mx-auto py-10 md:py-20">
       <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
 
       <div className="mb-6">

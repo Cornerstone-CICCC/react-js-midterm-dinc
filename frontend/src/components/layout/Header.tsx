@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const styles = {
-  base: 'fixed z-10 flex items-center px-4',
+  base: 'fixed z-200 flex items-center px-4',
   mobile:
     'justify-around py-4 shadow-2xs bg-white border-1 bottom-16 rounded-4xl right-5 left-5',
   pc: 'md:justify-between md:top-0 md:py-2 md:w-full md:border-b-2 md:border-black md:bg-white',

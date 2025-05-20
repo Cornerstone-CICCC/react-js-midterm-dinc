@@ -7,9 +7,9 @@ export const metadata: Metadata = {
 };
 const CreateWorkPage = () => {
   return (
-    <>
+    <div className="px-4">
       <ProductFormCreate />
-    </>
+    </div>
   );
 };
 

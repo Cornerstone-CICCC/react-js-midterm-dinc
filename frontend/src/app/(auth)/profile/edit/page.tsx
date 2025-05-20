@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const EditUserProfilePage = () => {
   return (
-    <div>
+    <div className="px-4">
       <UserProfileForm />
     </div>
   );
