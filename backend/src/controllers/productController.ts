@@ -103,6 +103,7 @@ export const getProductById = async (
             userName: '$user.userName',
             bio: '$user.bio',
             fileId: '$user.fileId',
+            location: '$user.location',
             lastLogin: '$user.lastLogin',
             isLoggedIn: '$user.isLoggedIn',
             createdAt: '$user.createdAt',
