@@ -20,7 +20,7 @@ const fetcher = async (url: string) => {
     method: 'GET',
   });
   if (!res.ok) {
-    throw new Error('Failed to fetch user data');
+    throw new Error('Failed to fetch product data');
   }
   const data = await res.json();
   if (!data) {
@@ -37,18 +37,15 @@ export const useWork = (productId?: string): useWorkType => {
     data,
     error,
     isLoading: isFetching,
-  } = useSWR<Product>(
+  } = useSWR<Product[]>(
     productId ? `${apiBaseUrl}/products/${productId}` : null,
     fetcher,
     {
       onSuccess: (data) => {
         if (data) {
-          setProduct(data);
+          setProduct(data[0]);
         }
       },
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      dedupingInterval: 60000, // 1分間は重複リクエストを防ぐ
     },
   );
 
@@ -59,7 +56,6 @@ export const useWork = (productId?: string): useWorkType => {
   // Create a new work
   const createWork = async (data: Partial<Product>) => {
     setLoading(true);
-    console.log(data);
 
     try {
       const res = await fetch(`${apiBaseUrl}/products`, {
@@ -170,7 +166,7 @@ export const useWork = (productId?: string): useWorkType => {
     loading,
     showError,
     errorMessage,
-    data,
+    data: data?.[0],
     error,
     isFetching,
   };

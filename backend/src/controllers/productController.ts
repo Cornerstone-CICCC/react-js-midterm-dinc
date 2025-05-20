@@ -93,8 +93,11 @@ export const getProductById = async (
           description: 1,
           imageUrls: 1,
           categorySlug: 1,
+          status: 1,
+          createdAt: 1,
+          updatedAt: 1,
           user: {
-            _id: '$user._id',
+            id: '$user._id',
             name: '$user.name',
             email: '$user.email',
             userName: '$user.userName',
@@ -124,13 +127,13 @@ export const createProduct = async (
 ) => {
   try {
     const userId = req.user?.id;
-    const { name, price, description, imageUrls, category } = req.body;
+    const { name, price, description, imageUrls, categorySlug } = req.body;
     const newProduct = new Product({
       name,
       price,
       description,
       imageUrls,
-      categorySlug: category,
+      categorySlug,
       userId,
     });
     await newProduct.save();
@@ -150,10 +153,10 @@ export const updateProduct = async (
     // categorySlug
     const userId = req.user?.id;
     const productId = req.params.id;
-    const { name, price, description, imageUrls, category } = req.body;
+    const { name, price, description, imageUrls, categorySlug } = req.body;
     const updatedProduct = await Product.findByIdAndUpdate(
       { _id: new mongoose.Types.ObjectId(productId), userId },
-      { name, price, description, imageUrls, categorySlug: category },
+      { name, price, description, imageUrls, categorySlug },
       { new: true },
     );
     if (!updatedProduct) {

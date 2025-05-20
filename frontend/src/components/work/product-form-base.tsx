@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ProductFormInputs, productSchema } from '@/schemas/productSchema';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
-import { Images } from 'lucide-react';
+import { Images, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 import { MAX_IMAGES } from '@/constants/constants';
 import { CATEGORIES } from '@/constants/categories';
 import {
@@ -21,50 +20,71 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useWork } from '@/hooks/useWork';
-import { Product } from '@/types/product';
 import { CommonAlert } from '@/components/ui/common-alert';
-import { useFirebaseStorage } from '@/hooks/useFirebaseStorage';
-import useUserStore from '@/stores/useUserStore';
-import useProductStore from '@/stores/useProductStore';
 
-interface ProductFormProps {
-  isEditMode?: boolean;
+interface ProductFormBaseProps {
+  onSubmit: (
+    data: ProductFormInputs,
+    uploadedImages: File[],
+    existingImageUrls: string[],
+  ) => Promise<void>;
+  loading: boolean;
+  showError: boolean;
+  errorMessage: string;
+  initialData?: {
+    title: string;
+    description: string;
+    price: number;
+    category: string;
+    imageUrls: string[];
+  };
+  submitButtonText: string;
   onDelete?: () => void;
 }
 
-const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
+export const ProductFormBase = ({
+  onSubmit,
+  loading,
+  showError,
+  errorMessage,
+  initialData,
+  submitButtonText,
+  onDelete,
+}: ProductFormBaseProps) => {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-  const { createWork, loading, showError, errorMessage, updateWork } =
-    useWork();
-  const { uploadImage } = useFirebaseStorage();
-  const { user } = useUserStore();
-  const { product } = useProductStore();
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>(
+    initialData?.imageUrls || [],
+  );
+  const [alertConfig, setAlertConfig] = useState<{
+    show: boolean;
+    title: string;
+    description: string;
+  }>({
+    show: false,
+    title: '',
+    description: '',
+  });
 
   const form = useForm<ProductFormInputs>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      price: 0,
-      category: '',
+      title: initialData?.title || '',
+      description: initialData?.description || '',
+      price: initialData?.price || 0,
+      category: initialData?.category || '',
     },
   });
 
-  useEffect(() => {
-    if (isEditMode && product) {
-      form.reset({
-        title: product.name || '',
-        description: product.description || '',
-        price: product.price || 0,
-        category: product.categorySlug || '',
-      });
-    }
-  }, [isEditMode, product, form]);
-
   const onDrop = (acceptedFiles: File[]) => {
-    if (uploadedImages.length + acceptedFiles.length > MAX_IMAGES) {
-      alert(`You can only upload up to ${MAX_IMAGES} images`);
+    if (
+      existingImageUrls.length + uploadedImages.length + acceptedFiles.length >
+      MAX_IMAGES
+    ) {
+      setAlertConfig({
+        show: true,
+        title: 'Image Limit',
+        description: `You can only upload up to ${MAX_IMAGES} images in total.`,
+      });
       return;
     }
 
@@ -74,7 +94,11 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
     });
 
     if (validFiles.length !== acceptedFiles.length) {
-      alert('Only JPEG and PNG files are allowed');
+      setAlertConfig({
+        show: true,
+        title: 'File Format Error',
+        description: 'Only JPEG and PNG files are allowed.',
+      });
     }
 
     setUploadedImages((prev) => [...prev, ...validFiles]);
@@ -89,7 +113,7 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png'],
     },
-    disabled: uploadedImages.length >= MAX_IMAGES,
+    disabled: existingImageUrls.length + uploadedImages.length >= MAX_IMAGES,
   });
 
   const onPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,46 +129,14 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
     return value.toLocaleString('en-US');
   };
 
-  const onSubmit = (data: ProductFormInputs) => {
-    if (!user) {
-      return;
-    }
-
-    if (uploadedImages.length === 0) {
-      alert('Please upload at least one image');
-      return;
-    }
-
-    // ファイル名からスペースを削除し、ハイフンに置き換える
-    const sanitizedTitle = data.title.replace(/\s+/g, '-').toLowerCase();
-
-    // Upload images to Firebase Storage
-    const imageUrls: string[] = [];
-    uploadedImages.forEach(async (image) => {
-      imageUrls.push(
-        await uploadImage(image, `products/${user.id}/${sanitizedTitle}`),
-      );
-    });
-
-    const newProduct: Partial<Product> = {
-      name: data.title,
-      price: data.price,
-      description: data.description,
-      imageUrls: imageUrls,
-      categorySlug: data.category,
-    };
-
-    if (isEditMode && product) {
-      updateWork(product.id, newProduct);
-    } else {
-      createWork(newProduct);
-    }
+  const handleSubmit = async (data: ProductFormInputs) => {
+    await onSubmit(data, uploadedImages, existingImageUrls);
   };
 
   return (
     <div className="max-w-xl mx-auto py-20">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        {isEditMode ? 'Edit listing' : 'Create listing'}
+        {initialData ? 'Edit listing' : 'Create listing'}
       </h1>
 
       <div className="mb-6">
@@ -154,16 +146,50 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
           title="Error"
           description={errorMessage}
         />
+        <CommonAlert
+          show={alertConfig.show}
+          variant="destructive"
+          title={alertConfig.title}
+          description={alertConfig.description}
+        />
       </div>
 
       {/* Image Previews */}
       <div className="space-y-3">
         <label className="block font-medium text-lg">Images</label>
-        {uploadedImages.length > 0 && (
+        {(existingImageUrls.length > 0 || uploadedImages.length > 0) && (
           <div className="mb-4 grid grid-cols-3 gap-3">
+            {existingImageUrls.map((url, index) => (
+              <div
+                key={`existing-${index}`}
+                className="relative w-40 h-40 border rounded overflow-hidden bg-gray-300"
+              >
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Image
+                    src={url}
+                    alt={`Existing image ${index}`}
+                    className="max-w-full max-h-full object-contain"
+                    width={300}
+                    height={300}
+                  />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2 text-stone-300 hover:text-stone-100 bg-stone-500/50 hover:bg-stone-500/80 rounded-full"
+                  onClick={() => {
+                    setExistingImageUrls((prev) =>
+                      prev.filter((_, i) => i !== index),
+                    );
+                  }}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            ))}
             {uploadedImages.map((image, index) => (
               <div
-                key={index}
+                key={`uploaded-${index}`}
                 className="relative w-40 h-40 border rounded overflow-hidden bg-gray-300"
               >
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -193,7 +219,7 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
           {...getRootProps()}
           className={`border-2 border-dashed p-8 rounded-lg ${
             isDragActive ? 'border-gray-600' : 'border-gray-300'
-          } ${uploadedImages.length >= MAX_IMAGES ? 'opacity-50 cursor-not-allowed' : ''}`}
+          } ${existingImageUrls.length + uploadedImages.length >= MAX_IMAGES ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <input {...getInputProps()} />
           {isDragActive ? (
@@ -205,7 +231,7 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
             <div className="flex flex-col items-center justify-center gap-6">
               <Images className="h-12 w-12" />
               <p className="text-base text-gray-500">
-                {uploadedImages.length >= MAX_IMAGES
+                {existingImageUrls.length + uploadedImages.length >= MAX_IMAGES
                   ? `Maximum ${MAX_IMAGES} images reached`
                   : 'Drop your image here, or browse for images'}
               </p>
@@ -213,7 +239,7 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
           )}
         </div>
         <div className="text-right text-base mt-2">
-          {uploadedImages.length}/{MAX_IMAGES}
+          {existingImageUrls.length + uploadedImages.length}/{MAX_IMAGES}
         </div>
       </div>
 
@@ -221,7 +247,7 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
       <Form {...form}>
         <form
           onSubmit={(e) => {
-            form.handleSubmit(onSubmit)(e);
+            form.handleSubmit(handleSubmit)(e);
           }}
           className="space-y-6 mt-6"
         >
@@ -328,10 +354,10 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
             type="submit"
             disabled={loading}
           >
-            {loading ? 'Publishing...' : 'Publish'}
+            {loading ? 'Publishing...' : submitButtonText}
           </Button>
 
-          {isEditMode && onDelete && (
+          {onDelete && (
             <Button
               variant="destructive"
               className="w-full p-5 text-lg"
@@ -346,5 +372,3 @@ const ProductForm = ({ isEditMode = false, onDelete }: ProductFormProps) => {
     </div>
   );
 };
-
-export default ProductForm;
