@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -80,8 +80,7 @@ const Header = () => {
               >
                 <Link href={`/profile`}>
                   <Avatar className="flex items-center justify-center">
-                    <AvatarImage src={user.fileId || '/default_profile.png'} className="object-cover" />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage src={user.fileId || '/default-profile.png'} className="object-cover" />
                   </Avatar>
                   <span className="sr-only">Profile</span>
                 </Link>
@@ -145,10 +144,9 @@ const Header = () => {
                           >
                             <Avatar className="flex items-center justify-center">
                               <AvatarImage
-                                src={user.fileId || '/default_profile.png'}
+                                src={user.fileId || '/default-profile.png'}
                                 className="object-cover"
                               />
-                              <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <span className="sr-only">Profile</span>
                           </Button>

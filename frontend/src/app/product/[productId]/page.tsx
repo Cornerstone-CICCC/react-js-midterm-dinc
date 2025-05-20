@@ -7,12 +7,9 @@ import { cn } from '@/lib/utils';
 import { DotIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, use, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useWork } from '@/hooks/useWork';
 import useUserStore from '@/stores/useUserStore';
-import { Suspense } from 'react';
-import { CommonAlert } from '@/components/ui/common-alert';
-import ProductSkeleton from '@/components/product/product-detail-skeleton';
 
 type PageParams = {
   productId: string;
@@ -22,13 +19,13 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
   const resolvedParams = use(params);
   const { productId } = resolvedParams;
   const { user } = useUserStore();
-
   const { data, error, isFetching } = useWork(productId);
-  console.log(data);
   const [currentImg, setCurrentImg] = useState<string>('');
+  const isOwner = data?.user?.id === user?.id;
 
   useEffect(() => {
     if (data?.imageUrls && data.imageUrls.length > 0) {
+      console.log(data.imageUrls);
       setCurrentImg(data.imageUrls[0]);
     }
   }, [data]);
@@ -37,109 +34,103 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
     setCurrentImg(url);
   };
 
-  // const today = Date.now() / 1000;
-  // const diff = data?.updatedAt.getTime() / 1000;
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
 
-  if (isFetching || !data) {
-    return <ProductSkeleton />;
+  if (error || !data) {
+    return <div>Error: {error?.message || 'Failed to load product'}</div>;
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="p-5 md:p-20">
-        <div className="mb-6">
-          <CommonAlert
-            show={error ? true : false}
-            variant="destructive"
-            title="Error"
-            description="Fail to get product data."
-          />
-        </div>
-        <div className="flex flex-col gap-10 lg:flex-row">
-          <div className="">
-            <div className="space-y-3">
-              <div className="h-[400px] w-[400px] md:h-[500px] md:w-[500px] relative mx-auto">
+    <div className="p-5 md:p-20">
+      <div className="flex flex-col gap-10 lg:flex-row">
+        <div className="">
+          <div className="space-y-3">
+            <div className="h-[400px] w-[400px] md:h-[500px] md:w-[500px] relative mx-auto">
+              {currentImg && (
                 <Image
-                  src={`/${currentImg}`}
-                  alt=""
+                  src={currentImg}
+                  alt={data.name}
                   fill
                   className="bg-zinc-100 object-contain"
                 />
-              </div>
-              <div className="flex gap-3 justify-end w-[400px] md:w-[500px] mx-auto">
-                {data?.imageUrls.map((url, i) => (
-                  <button
-                    key={i}
-                    className={cn({
-                      'bg-zinc-100 size-20 relative border-1 border-white':
-                        true,
-                      'border-1 border-black': url === currentImg,
-                    })}
-                    onClick={() => handleImageChange(url)}
-                  >
+              )}
+            </div>
+            <div className="flex gap-3 justify-end w-[400px] md:w-[500px] mx-auto">
+              {data.imageUrls?.map((url, i) => (
+                <button
+                  key={i}
+                  className={cn({
+                    'bg-zinc-100 size-20 relative border-1 border-white': true,
+                    'border-1 border-black': url === currentImg,
+                  })}
+                  onClick={() => handleImageChange(url)}
+                >
+                  {url && (
                     <Image
-                      src={`/${url}`}
-                      alt=""
+                      src={url}
+                      alt={data.name}
                       fill
                       className="object-contain"
                     />
-                  </button>
-                ))}
-              </div>
+                  )}
+                </button>
+              ))}
             </div>
-          </div>
-          <div className="space-y-4">
-            <h2 className="text-4xl font-bold">{data?.name}</h2>
-            <div className="flex gap-2">
-              <Badge variant={'outline'}>{data?.categorySlug}</Badge>
-            </div>
-            <div className="space-y-1">
-              <div className="text-2xl font-bold">$ {data?.price}</div>
-              <div className="text-sm text-muted-foreground flex items-center">
-                <span>{data?.user.location}</span>
-                <DotIcon />
-                <span>
-                  {/* Listed {Math.floor((today - diff) / (60 * 60 * 24))} days ago */}
-                </span>
-              </div>
-            </div>
-            <div className="space-y-4 mt-8 p-4 bg-zinc-50 rounded-sm">
-              <h3 className="text-lg font-bold">Details</h3>
-              <div className="text-muted-foreground">
-                <p>{data?.description}</p>
-              </div>
-            </div>
-            <div className="w-full flex items-center space-x-4 mt-4 p-4 bg-zinc-50 rounded-sm">
-              <Avatar>
-                <AvatarImage src={data?.user.fileId} alt="@shadcn" />
-                <AvatarFallback>S</AvatarFallback>
-              </Avatar>
-              <p className="truncate font-semibold">
-                <Link href={`/user/${data?.user.id}`}>{data?.user.name}</Link>
-              </p>
-            </div>
-
-            {data?.user.id === user?.id ? (
-              <Button className="w-full" size={'lg'} asChild>
-                <Link href={`/work/edit`}>
-                  <span className="uppercase">Edit</span>
-                </Link>
-              </Button>
-            ) : data?.status === 'active' ? (
-              <Button className="w-full" size={'lg'} asChild>
-                <Link href="/payment">
-                  <span className="uppercase">Purchase</span>
-                </Link>
-              </Button>
-            ) : (
-              <Button className="w-full" size={'lg'} disabled>
-                <span className="uppercase">Soldout</span>
-              </Button>
-            )}
           </div>
         </div>
+        <div className="space-y-4">
+          <h2 className="text-4xl font-bold">{data.name}</h2>
+          <div className="flex gap-2">
+            <Badge variant={'outline'}>{data.categorySlug}</Badge>
+          </div>
+          <div className="space-y-1">
+            <div className="text-2xl font-bold">$ {data.price}</div>
+            <div className="text-sm text-muted-foreground flex items-center">
+              <span>{data.user?.location}</span>
+              <DotIcon />
+            </div>
+          </div>
+          <div className="space-y-4 mt-8 p-4 bg-zinc-50 rounded-sm">
+            <h3 className="text-lg font-bold">Details</h3>
+            <div className="text-muted-foreground">
+              <p>{data.description}</p>
+            </div>
+          </div>
+          <div className="w-full flex items-center space-x-4 mt-4 p-4 bg-zinc-50 rounded-sm">
+            <Avatar>
+              <AvatarImage src={data.user?.fileId} alt={data.user?.name} />
+              <AvatarFallback>S</AvatarFallback>
+            </Avatar>
+            <p className="truncate font-semibold">
+              <Link href={isOwner ? `/profile` : `/user/${data.user?.id}`}>
+                {data.user?.name}
+              </Link>
+            </p>
+          </div>
+
+          {isOwner ? (
+            <Button className="w-full" size={'lg'} asChild>
+              <Link href={`/work/edit`}>
+                <span className="uppercase">Edit</span>
+              </Link>
+            </Button>
+          ) : data.status === 'active' ? (
+            <Button className="w-full" size={'lg'} asChild>
+              <Link href="/payment">
+                <span className="uppercase">Purchase</span>
+              </Link>
+            </Button>
+          ) : (
+            <Button className="w-full" size={'lg'} disabled>
+              <span className="uppercase">Soldout</span>
+            </Button>
+          )}
+        </div>
       </div>
-    </Suspense>
+    </div>
   );
 };
+
 export default ProductDetail;
