@@ -1,15 +1,20 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { useGoogleAuth } from '@/hooks/useGoogleAuth'
+import { useGoogleAuth } from '@/hooks/useGoogleAuth';
 
 export default function AuthCallback() {
+  const pageTitle = 'Login - DINCT';
   const [message, setMessage] = useState('Authenticating with Google...');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { googleAuth } = useGoogleAuth();
+
+  useEffect(() => {
+    document.title = pageTitle;
+  }, [document.title]);
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -18,10 +23,13 @@ export default function AuthCallback() {
 
         const supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
         );
 
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
 
         if (error || !session) {
           setMessage('Authentication failed');
@@ -36,10 +44,11 @@ export default function AuthCallback() {
         const data = {
           email: session.user.email,
           name: session?.user.user_metadata.full_name || '',
-          password: Math.random().toString(36).slice(-10) + Date.now().toString()
-        }
+          password:
+            Math.random().toString(36).slice(-10) + Date.now().toString(),
+        };
 
-        const response = await googleAuth(data)
+        const response = await googleAuth(data);
 
         if (!response) {
           setMessage('Failed to authenticate');
@@ -48,7 +57,6 @@ export default function AuthCallback() {
 
         console.log('Redirecting to:', callbackUrl);
         router.push(callbackUrl);
-
       } catch (error) {
         console.error('Authentication error:', error);
         setMessage('An error occurred during authentication');

@@ -1,6 +1,7 @@
 'use client';
-
+import Head from 'next/head';
 import Inputpair from '@/components/payment/Inputpair';
+import { useEffect } from 'react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,8 +16,13 @@ import { useRouter } from 'next/navigation';
 import useProductStore from '@/stores/useProductStore';
 
 const PaymentPage = () => {
+  const pageTitle = 'Payment - DINCT';
   const router = useRouter();
   const { product } = useProductStore();
+
+  useEffect(() => {
+    document.title = pageTitle;
+  }, [document.title]);
 
   const handleSubmitPayment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,6 +31,9 @@ const PaymentPage = () => {
 
   return (
     <div className="p-4 pb-20 lg:p-20">
+      <Head>
+        <title>{document.title}</title>
+      </Head>
       <div className="items-start space-y-5 lg:grid lg:grid-cols-6 lg:space-x-4">
         <div className="col-span-4 lg:px-4">
           <div className="border-t-2 border-black">
