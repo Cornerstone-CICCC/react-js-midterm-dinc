@@ -12,3 +12,5 @@ export interface Product {
   updatedAt: string;
   user: User;
 }
+
+//
