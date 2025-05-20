@@ -13,7 +13,7 @@ export function slugToTitle(slug: string) {
   return title;
 }
 
-export function tilteToSlug(slug: string) {
+export function titleToSlug(slug: string) {
   const words = slug.split(' ');
   const title = words.map((word) => word.toLowerCase()).join('-');
   return title;

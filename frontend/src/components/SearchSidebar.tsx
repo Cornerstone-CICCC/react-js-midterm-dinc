@@ -3,7 +3,7 @@ import { useSearchContext } from '@/context/SearchContext';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { CATEGORIES } from '@/constants/categories';
-import { tilteToSlug } from '@/lib/utils';
+import { titleToSlug } from '@/lib/utils';
 import { SearchIcon } from 'lucide-react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -22,21 +22,9 @@ const SearchSidebar = () => {
 
   useEffect(() => {
     if (categoryQuery) {
-      // handleCategory(categoryQuery);
+      handleCategory(categoryQuery);
     }
   }, [categoryQuery]);
-
-  const categoriesList = [
-    'beauty',
-    'apparel',
-    'fragrances',
-    'gadget',
-    'kitchen',
-    'outdoors',
-    'furniture',
-    'books',
-    'groceries',
-  ];
 
   const handleChange = (
     param: string,
@@ -46,7 +34,7 @@ const SearchSidebar = () => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (param === 'category') {
-      if (value === selectedCategory) {
+      if (value === titleToSlug(selectedCategory)) {
         current.delete('category');
       } else {
         current.set(param, value);
@@ -92,12 +80,16 @@ const SearchSidebar = () => {
           {CATEGORIES.map((cate) => (
             <Button
               key={cate}
-              variant={selectedCategory === cate ? 'default' : 'secondary'}
+              variant={
+                titleToSlug(categoryQuery) === titleToSlug(cate)
+                  ? 'default'
+                  : 'secondary'
+              }
               size={'sm'}
               className={'m-1.5'}
               onClick={() => {
-                handleCategory(cate);
-                handleChange('category', tilteToSlug(cate));
+                handleCategory(titleToSlug(cate));
+                handleChange('category', titleToSlug(cate));
               }}
             >
               {cate}

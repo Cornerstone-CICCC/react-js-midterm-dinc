@@ -1,19 +1,17 @@
 import ProductCard from './product-card';
 import { Product } from '@/types/product';
-import { cn, tilteToSlug } from '@/lib/utils';
+import { cn, titleToSlug } from '@/lib/utils';
 import { useSearchContext } from '@/context/SearchContext';
-import { Link } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDebounce } from 'use-debounce';
 import { Spinner } from '../ui/spinner';
 
-interface ProductListProps {
-  products: Product[];
-}
-
 const ProductList = () => {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
+  const searchCategory = searchParams.get('category') || '';
   const { searchValue, setSearch, selectedCategory, handleCategory } =
     useSearchContext();
   const [products, setProducts] = useState<Product[]>([]);
@@ -23,20 +21,15 @@ const ProductList = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [initialFetched, setInitialFetched] = useState(false);
-  const [debouncedHandleSearch] = useDebounce(searchValue, 500);
-
+  const [debouncedHandleSearch] = useDebounce(searchQuery, 500);
   const [ref, inView, entry] = useInView({
     threshold: 0,
   });
 
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get('search') || '';
-  const searchCategory = searchParams.get('category') || '';
-
   const fetchProducts = async (search?: string, category?: string) => {
     try {
       const req = await fetch(
-        `http://localhost:4500/products/search?search=${search}&category=${tilteToSlug(category || '')}&page=${
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/search?search=${search}&category=${titleToSlug(category || '')}&page=${
           page
         }&limit=${limit}`,
       );
@@ -57,7 +50,7 @@ const ProductList = () => {
     }
 
     if (searchCategory && !selectedCategory.length) {
-      handleCategory(searchCategory);
+      handleCategory(titleToSlug(searchCategory));
     }
   }, []);
 
