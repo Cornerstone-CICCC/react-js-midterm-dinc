@@ -9,9 +9,15 @@ interface ProductListProps {
   userId?: string;
   search?: string;
   category?: string;
+  noResultsText?: React.ReactNode;
 }
 
-const ProductList = ({ userId, search, category }: ProductListProps) => {
+const ProductList = ({
+  userId,
+  search,
+  category,
+  noResultsText,
+}: ProductListProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -96,6 +102,28 @@ const ProductList = ({ userId, search, category }: ProductListProps) => {
       isCancelled = true;
     };
   }, [page]);
+
+  const noResults = initialFetched && products.length === 0 && !loading;
+  const noResultsTextComponent = (
+    <div className="w-full absolute top-0 -z-1 left-0 h-full font-semibold flex text-center items-center justify-center text-2xl text-gray-400">
+      {noResultsText ? (
+        noResultsText
+      ) : (
+        <>
+          No masterpieces found! <br />
+          Try exploring something different.
+        </>
+      )}
+    </div>
+  );
+
+  if (noResults) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        {noResultsTextComponent}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

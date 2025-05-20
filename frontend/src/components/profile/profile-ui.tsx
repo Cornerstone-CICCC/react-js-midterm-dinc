@@ -5,12 +5,10 @@ import { Button } from '../ui/button';
 import { User } from '@/types/user';
 import { useState } from 'react';
 import ProductList from '@/components/product/product-list';
-import { Product } from '@/types/product';
 
 interface ProfileUIProps {
   user: User;
   isOwnProfile: boolean;
-  products: Product[];
 }
 
 const ProfileUI = ({ user, isOwnProfile }: ProfileUIProps) => {
@@ -95,7 +93,21 @@ const ProfileUI = ({ user, isOwnProfile }: ProfileUIProps) => {
 
       {/* Product List Section */}
       <div className="mx-auto py-0 lg:py-8">
-        <ProductList userId={user.id} />
+        <ProductList
+          userId={user.id}
+          noResultsText={
+            isOwnProfile ? (
+              <div>
+                The artists canvas is still blank… <br />
+              </div>
+            ) : (
+              <div>
+                No masterpieces found! <br />
+                Try exploring other categories.
+              </div>
+            )
+          }
+        />
       </div>
     </div>
   );

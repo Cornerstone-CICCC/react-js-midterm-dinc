@@ -17,7 +17,7 @@ const Home = () => {
     return <HomeSkeleton />;
   }
   return (
-    <div className="md:flex w-full">
+    <div className="min-h-[calc(100vh-50px-70px)] w-full md:flex">
       <SearchSidebar />
       <ProductList category={searchCategory} search={debouncedHandleSearch} />
     </div>
