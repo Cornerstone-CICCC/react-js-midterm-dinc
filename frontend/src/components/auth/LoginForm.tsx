@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { loginSchema, LoginFormValues } from "@/schemas/authSchemas";
 import GoogleAuth from "./GoogleAuth";
+import { Spinner } from "../ui/spinner";
 
 type LoginFormProps = {
   login: (data: LoginFormValues) => Promise<boolean>;
@@ -81,16 +82,20 @@ const LoginForm = ({ login, loading, setError }: LoginFormProps) => {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? (
-            <>
-              <span>Logging in</span>
-              <span className="ml-2 inline-block animate-spin">⟳</span>
-            </>
-          ) : (
-            "Log in"
-          )}
-        </Button>
+          <Button
+            type="submit"
+            className="w-full h-10 flex items-center justify-center"
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <Spinner size={'small'} className="text-white" />
+                <span className="ml-2">Log in</span>
+              </div>
+            ) : (
+              "Log in"
+            )}
+          </Button>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">

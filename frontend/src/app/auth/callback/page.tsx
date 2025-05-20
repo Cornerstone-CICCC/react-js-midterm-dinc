@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { useGoogleAuth } from '@/hooks/useGoogleAuth';
+import { useGoogleAuth } from '@/hooks/useGoogleAuth';\
+import { Spinner } from '@/components/ui/spinner';
 
 export default function AuthCallback() {
   const pageTitle = 'Login - DINCT';
-  const [message, setMessage] = useState('Authenticating with Google...');
+  const [message, setMessage] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { googleAuth } = useGoogleAuth();
@@ -68,7 +69,11 @@ export default function AuthCallback() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <p>{message}</p>
+      {message ? (
+        <p className="text-red-500">{message}</p>
+      ) : (
+        <Spinner size={'large'}>Authenticating with Google...</Spinner>
+      )}
     </div>
   );
 }
