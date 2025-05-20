@@ -23,7 +23,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           src={product.imageUrls[0]}
           alt={product.name}
           fill
-          className="object-contain p-1"
+          className="object-cover p-1"
         />
         {!product.status && (
           <div className="absolute inset-0 rounded bg-stone-950/75 flex items-center justify-center">
@@ -31,9 +31,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         )}
       </div>
-      <div className="hidden sm:block">
-        <p className="text-xl font-bold mt-1">${product.price}</p>
-        <h2 className="line-clamp-2">{product.name}</h2>
+      <div className="mb-2 md:mb-0">
+        <p className="font-bold mt-1 text-base">${product.price}</p>
+        <h2 className="line-clamp-2 text-xs md:text-sm">{product.name}</h2>
       </div>
     </div>
   );
