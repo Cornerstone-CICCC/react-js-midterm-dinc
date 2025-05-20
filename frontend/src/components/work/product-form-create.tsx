@@ -79,7 +79,7 @@ export const ProductFormCreate = () => {
 
   return (
     <>
-      <div className="mb-6">
+      <div className="pb-6">
         <CommonAlert
           show={alertConfig.show}
           variant="destructive"
