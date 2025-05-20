@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react';
 const styles = {
   base: 'fixed z-10 flex items-center px-4',
   mobile:
-    'justify-around py-4 shadow-2xs bg-white border-1 bottom-4 rounded-4xl right-5 left-5',
+    'justify-around py-4 shadow-2xs bg-white border-1 bottom-16 rounded-4xl right-5 left-5',
   pc: 'md:justify-between md:top-0 md:py-2 md:w-full md:border-b-2 md:border-black md:bg-white',
 };
 
@@ -80,7 +80,10 @@ const Header = () => {
               >
                 <Link href={`/profile`}>
                   <Avatar className="flex items-center justify-center">
-                    <AvatarImage src={user.fileId || '/default-profile.png'} className="object-cover" />
+                    <AvatarImage
+                      src={user.fileId || '/default-profile.png'}
+                      className="object-cover"
+                    />
                   </Avatar>
                   <span className="sr-only">Profile</span>
                 </Link>
