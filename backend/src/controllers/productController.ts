@@ -88,7 +88,6 @@ export const getProductById = async (
       { $unwind: '$user' },
       {
         $project: {
-          id: '$_id',
           name: 1,
           price: 1,
           description: 1,

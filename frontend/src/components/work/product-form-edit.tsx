@@ -9,7 +9,9 @@ import { ProductFormBase } from './product-form-base';
 import { ProductFormInputs } from '@/schemas/productSchema';
 import { Product } from '@/types/product';
 import { CommonDialog } from '@/components/ui/common-dialog';
+import { CommonAlert } from '@/components/ui/common-alert';
 import { useState } from 'react';
+import { slugToTitle, tilteToSlug } from '@/lib/utils';
 
 export const ProductFormEdit = () => {
   const { updateWork, deleteWork, loading, showError, errorMessage } =
@@ -19,6 +21,15 @@ export const ProductFormEdit = () => {
   const { product } = useProductStore();
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<{
+    show: boolean;
+    title: string;
+    description: string;
+  }>({
+    show: false,
+    title: '',
+    description: '',
+  });
 
   const handleSubmit = async (
     data: ProductFormInputs,
@@ -30,7 +41,11 @@ export const ProductFormEdit = () => {
     }
 
     if (uploadedImages.length === 0 && existingImageUrls.length === 0) {
-      alert('Please upload at least one image');
+      setAlertConfig({
+        show: true,
+        title: 'Image Required',
+        description: 'Please upload at least one image.',
+      });
       return;
     }
 
@@ -49,17 +64,21 @@ export const ProductFormEdit = () => {
         price: data.price,
         description: data.description,
         imageUrls: [...existingImageUrls, ...newImageUrls],
-        categorySlug: data.category,
+        categorySlug: tilteToSlug(data.category),
       };
 
-      const result = await updateWork(product.id, updatedProduct);
+      const result = await updateWork(product._id, updatedProduct);
 
       if (result) {
         router.push(`/`);
       }
     } catch (error) {
       console.error('Error uploading images:', error);
-      alert('Failed to upload images. Please try again.');
+      setAlertConfig({
+        show: true,
+        title: 'Upload Error',
+        description: 'Failed to upload images. Please try again.',
+      });
     }
   };
 
@@ -70,7 +89,7 @@ export const ProductFormEdit = () => {
 
   const handleConfirmDelete = async () => {
     if (!product) return;
-    const res = await deleteWork(product.id);
+    const res = await deleteWork(product._id);
     if (res) {
       router.push('/');
     }
@@ -83,6 +102,14 @@ export const ProductFormEdit = () => {
 
   return (
     <>
+      <div className="mb-6">
+        <CommonAlert
+          show={alertConfig.show}
+          variant="destructive"
+          title={alertConfig.title}
+          description={alertConfig.description}
+        />
+      </div>
       <ProductFormBase
         onSubmit={handleSubmit}
         loading={loading}
@@ -92,7 +119,7 @@ export const ProductFormEdit = () => {
           title: product.name || '',
           description: product.description || '',
           price: product.price || 0,
-          category: product.categorySlug || '',
+          category: slugToTitle(product.categorySlug) || '',
           imageUrls: product.imageUrls || [],
         }}
         submitButtonText="Update"

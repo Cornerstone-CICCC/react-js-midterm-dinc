@@ -7,12 +7,24 @@ import { useRouter } from 'next/navigation';
 import { ProductFormBase } from './product-form-base';
 import { ProductFormInputs } from '@/schemas/productSchema';
 import { Product } from '@/types/product';
+import { tilteToSlug } from '@/lib/utils';
+import { useState } from 'react';
+import { CommonAlert } from '@/components/ui/common-alert';
 
 export const ProductFormCreate = () => {
   const { createWork, loading, showError, errorMessage } = useWork();
   const { uploadImage } = useFirebaseStorage();
   const { user } = useUserStore();
   const router = useRouter();
+  const [alertConfig, setAlertConfig] = useState<{
+    show: boolean;
+    title: string;
+    description: string;
+  }>({
+    show: false,
+    title: '',
+    description: '',
+  });
 
   const handleSubmit = async (
     data: ProductFormInputs,
@@ -23,7 +35,11 @@ export const ProductFormCreate = () => {
     }
 
     if (uploadedImages.length === 0) {
-      alert('Please upload at least one image');
+      setAlertConfig({
+        show: true,
+        title: 'Image Required',
+        description: 'Please upload at least one image.',
+      });
       return;
     }
 
@@ -43,7 +59,7 @@ export const ProductFormCreate = () => {
         price: data.price,
         description: data.description,
         imageUrls: imageUrls,
-        categorySlug: data.category,
+        categorySlug: tilteToSlug(data.category),
       };
 
       const result = await createWork(newProduct);
@@ -53,17 +69,31 @@ export const ProductFormCreate = () => {
       }
     } catch (error) {
       console.error('Error uploading images:', error);
-      alert('Failed to upload images. Please try again.');
+      setAlertConfig({
+        show: true,
+        title: 'Upload Error',
+        description: 'Failed to upload images. Please try again.',
+      });
     }
   };
 
   return (
-    <ProductFormBase
-      onSubmit={handleSubmit}
-      loading={loading}
-      showError={showError}
-      errorMessage={errorMessage}
-      submitButtonText="Publish"
-    />
+    <>
+      <div className="mb-6">
+        <CommonAlert
+          show={alertConfig.show}
+          variant="destructive"
+          title={alertConfig.title}
+          description={alertConfig.description}
+        />
+      </div>
+      <ProductFormBase
+        onSubmit={handleSubmit}
+        loading={loading}
+        showError={showError}
+        errorMessage={errorMessage}
+        submitButtonText="Publish"
+      />
+    </>
   );
 };

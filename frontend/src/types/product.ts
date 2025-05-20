@@ -1,7 +1,7 @@
 import { User } from './user';
 
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   description: string;
@@ -12,3 +12,4 @@ export interface Product {
   updatedAt: string;
   user: User;
 }
+

@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useState, useEffect, use } from 'react';
 import { useWork } from '@/hooks/useWork';
 import useUserStore from '@/stores/useUserStore';
+import { slugToTitle } from '@/lib/utils';
 
 type PageParams = {
   productId: string;
@@ -83,7 +84,7 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
         <div className="space-y-4">
           <h2 className="text-4xl font-bold">{data.name}</h2>
           <div className="flex gap-2">
-            <Badge variant={'outline'}>{data.categorySlug}</Badge>
+            <Badge variant={'outline'}>{slugToTitle(data.categorySlug)}</Badge>
           </div>
           <div className="space-y-1">
             <div className="text-2xl font-bold">$ {data.price}</div>
@@ -100,8 +101,10 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
           </div>
           <div className="w-full flex items-center space-x-4 mt-4 p-4 bg-zinc-50 rounded-sm">
             <Avatar>
-              <AvatarImage src={data.user?.fileId} alt={data.user?.name} />
-              <AvatarFallback>S</AvatarFallback>
+              <AvatarImage
+                src={data.user?.fileId || '/default-profile.png'}
+                alt={data.user?.name}
+              />
             </Avatar>
             <p className="truncate font-semibold">
               <Link href={isOwner ? `/profile` : `/user/${data.user?.id}`}>

@@ -55,6 +55,15 @@ export const ProductFormBase = ({
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>(
     initialData?.imageUrls || [],
   );
+  const [alertConfig, setAlertConfig] = useState<{
+    show: boolean;
+    title: string;
+    description: string;
+  }>({
+    show: false,
+    title: '',
+    description: '',
+  });
 
   const form = useForm<ProductFormInputs>({
     resolver: zodResolver(productSchema),
@@ -71,7 +80,11 @@ export const ProductFormBase = ({
       existingImageUrls.length + uploadedImages.length + acceptedFiles.length >
       MAX_IMAGES
     ) {
-      alert(`You can only upload up to ${MAX_IMAGES} images in total`);
+      setAlertConfig({
+        show: true,
+        title: 'Image Limit',
+        description: `You can only upload up to ${MAX_IMAGES} images in total.`,
+      });
       return;
     }
 
@@ -81,7 +94,11 @@ export const ProductFormBase = ({
     });
 
     if (validFiles.length !== acceptedFiles.length) {
-      alert('Only JPEG and PNG files are allowed');
+      setAlertConfig({
+        show: true,
+        title: 'File Format Error',
+        description: 'Only JPEG and PNG files are allowed.',
+      });
     }
 
     setUploadedImages((prev) => [...prev, ...validFiles]);
@@ -128,6 +145,12 @@ export const ProductFormBase = ({
           variant="destructive"
           title="Error"
           description={errorMessage}
+        />
+        <CommonAlert
+          show={alertConfig.show}
+          variant="destructive"
+          title={alertConfig.title}
+          description={alertConfig.description}
         />
       </div>
 
