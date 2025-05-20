@@ -71,9 +71,14 @@ const googleAuth = async (req: Request, res: Response) => {
       success: true,
       user: {
         id: user.id.toString(),
-        email: user.email,
-        userName: user.userName || "",
         name: user.name || "",
+        userName: user.userName || "",
+        email: user.email,
+        bio: user.bio || "",
+        fileId: user.fileId || "",
+        location: user.location || "",
+        lastLogin: user.lastLogin || null,
+        isLoggedIn: true,
       },
     });
 
@@ -153,6 +158,7 @@ const login = async (req: Request, res: Response) => {
           email: user.email,
           bio: user.bio || "",
           fileId: user.fileId || "",
+          location: user.location || "",
           lastLogin: user.lastLogin || null,
           isLoggedIn: true,
         },
