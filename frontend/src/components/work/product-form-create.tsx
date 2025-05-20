@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ProductFormBase } from './product-form-base';
 import { ProductFormInputs } from '@/schemas/productSchema';
 import { Product } from '@/types/product';
-import { tilteToSlug } from '@/lib/utils';
+import { titleToSlug } from '@/lib/utils';
 import { useState } from 'react';
 import { CommonAlert } from '@/components/ui/common-alert';
 
@@ -59,7 +59,7 @@ export const ProductFormCreate = () => {
         price: data.price,
         description: data.description,
         imageUrls: imageUrls,
-        categorySlug: tilteToSlug(data.category),
+        categorySlug: titleToSlug(data.category),
       };
 
       const result = await createWork(newProduct);

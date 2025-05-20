@@ -11,7 +11,7 @@ import { Product } from '@/types/product';
 import { CommonDialog } from '@/components/ui/common-dialog';
 import { CommonAlert } from '@/components/ui/common-alert';
 import { useState } from 'react';
-import { slugToTitle, tilteToSlug } from '@/lib/utils';
+import { slugToTitle, titleToSlug } from '@/lib/utils';
 
 export const ProductFormEdit = () => {
   const { updateWork, deleteWork, loading, showError, errorMessage } =
@@ -64,7 +64,7 @@ export const ProductFormEdit = () => {
         price: data.price,
         description: data.description,
         imageUrls: [...existingImageUrls, ...newImageUrls],
-        categorySlug: tilteToSlug(data.category),
+        categorySlug: titleToSlug(data.category),
       };
 
       const result = await updateWork(product._id, updatedProduct);
