@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Header />
-        <main className="min-h-[calc(100vh-74px)] md:mt-20">{children}</main>
+        <main className="min-h-[calc(100vh-50px)] md:mt-12">{children}</main>
         <Footer />
       </body>
     </html>
