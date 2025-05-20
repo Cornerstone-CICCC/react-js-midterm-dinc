@@ -69,7 +69,6 @@ const ProductList = () => {
     setPage(1);
     setTotal(0);
     setTotalPages(0);
-    setLimit(10);
     setLoading(true);
     if (initialFetched) {
       setTimeout(async () => {
@@ -94,8 +93,8 @@ const ProductList = () => {
   }, [page]);
 
   return (
-    <div>
-      <div className="flex max-w-full w-full flex-1 md:ml-[260px] pb-6 relative">
+    <div className="w-full">
+      <div className="flex max-w-full w-full flex-1 pb-6 relative">
         <Suspense
           fallback={
             <div className="flex items-center justify-center w-full h-screen">

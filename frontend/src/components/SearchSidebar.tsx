@@ -55,8 +55,8 @@ const SearchSidebar = () => {
   };
 
   return (
-    <div className="px-4 md:w-64 fixed z-100 bg-white max-md:w-full transition h-auto">
-      <div className="flex justify-between gap-1">
+    <div className="px-4 z-100 bg-white top-0 h-36 sticky md:h-2/3 md:max-w-72 md:top-16 md:w-full transition">
+      <div className="flex justify-between gap-1 mt-4 md:mt-0">
         <Input
           placeholder="Search..."
           value={searchValue}
@@ -74,9 +74,9 @@ const SearchSidebar = () => {
 
       <div>
         <div className="flex justify-between pr-4 md:my-4 max-md:my-2">
-          <h2 className="text-2xl">Categories</h2>
+          <h2 className="text-sm font-bold md:text-2xl">Categories</h2>
         </div>
-        <div className="mt-4 flex md:block max-md:overflow-scroll max-md:pb-4 md:-m-1.5">
+        <div className="md:mt-4 flex md:block max-md:overflow-scroll max-md:pb-4 md:-m-1.5">
           {CATEGORIES.map((cate) => (
             <Button
               key={cate}
@@ -86,7 +86,7 @@ const SearchSidebar = () => {
                   : 'secondary'
               }
               size={'sm'}
-              className={'m-1.5'}
+              className={'first-of-type:m-0 mx-1.5'}
               onClick={() => {
                 handleCategory(titleToSlug(cate));
                 handleChange('category', titleToSlug(cate));
