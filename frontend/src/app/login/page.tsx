@@ -10,8 +10,10 @@ const LoginPage = () => {
   const { error, login, loading, setError } = useLogin();
 
   useEffect(() => {
-    document.title = pageTitle;
-  }, [document.title]);
+    if (typeof window !== 'undefined') {
+      document.title = pageTitle;
+    }
+  }, [pageTitle]);
 
   return (
     <div className="min-h-screen flex items-center bg-gray-100 justify-center p-4">

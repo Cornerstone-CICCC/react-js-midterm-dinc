@@ -14,8 +14,10 @@ export default function AuthCallback() {
   const { googleAuth } = useGoogleAuth();
 
   useEffect(() => {
-    document.title = pageTitle;
-  }, [document.title]);
+    if (typeof window !== 'undefined') {
+      document.title = pageTitle;
+    }
+  }, [pageTitle]);
 
   useEffect(() => {
     const handleAuthCallback = async () => {

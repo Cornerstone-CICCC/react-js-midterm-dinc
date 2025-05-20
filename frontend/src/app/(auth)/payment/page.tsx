@@ -21,8 +21,10 @@ const PaymentPage = () => {
   const { product } = useProductStore();
 
   useEffect(() => {
-    document.title = pageTitle;
-  }, [document.title]);
+    if (typeof window !== 'undefined') {
+      document.title = pageTitle;
+    }
+  }, [pageTitle]);
 
   const handleSubmitPayment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

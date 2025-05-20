@@ -15,8 +15,10 @@ const Home = () => {
   const [debouncedHandleSearch] = useDebounce(searchQuery, 1000);
 
   useEffect(() => {
-    document.title = pageTitle;
-  }, [document.title]);
+    if (typeof window !== 'undefined') {
+      document.title = pageTitle;
+    }
+  }, [pageTitle]);
 
   const productSkeleton = true;
 

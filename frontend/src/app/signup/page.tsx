@@ -9,8 +9,10 @@ const SignupPage = () => {
   const { signup, loading, error, setError } = useSignup();
 
   useEffect(() => {
-    document.title = pageTitle;
-  }, [document.title]);
+    if (typeof window !== 'undefined') {
+      document.title = pageTitle;
+    }
+  }, [pageTitle]);
 
   return (
     <div className="min-h-screen flex items-center bg-gray-100 justify-center p-4">

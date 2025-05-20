@@ -9,8 +9,10 @@ const MyProfilePage = () => {
   const pageTitle = 'Profile - DINCT';
   const { user } = useUserStore();
   useEffect(() => {
-    document.title = pageTitle;
-  }, [document.title]);
+    if (typeof window !== 'undefined') {
+      document.title = pageTitle;
+    }
+  }, [pageTitle]);
 
   if (!user) {
     return <ProfileSkeleton isOwnProfile={true} />;
