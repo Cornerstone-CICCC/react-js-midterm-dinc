@@ -1,8 +1,7 @@
 'use client';
-
 import ProfileUI from '@/components/profile/profile-ui';
 import ProfileSkeleton from '@/components/profile/profile-skeleton';
-import { Suspense, use } from 'react';
+import { Suspense, use, useEffect } from 'react';
 import { useUser } from '@/hooks/useUser';
 
 type PageParams = {
@@ -13,6 +12,15 @@ const UserPage = ({ params }: { params: Promise<PageParams> }) => {
   const resolvedParams = use(params);
   const { userId } = resolvedParams;
   const { userData, isLoading, isError } = useUser(userId);
+
+  useEffect(() => {
+    if (userData) {
+      document.title = `${userData?.name} - DINCT`;
+    } else {
+      document.title = `User Profile - DINCT`;
+    }
+  }, [document.title, userData]);
+
   if (!userData || isError) {
     return <div>User not found</div>;
   }

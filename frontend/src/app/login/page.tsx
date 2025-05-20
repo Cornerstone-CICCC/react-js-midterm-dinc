@@ -1,11 +1,17 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useLogin } from "@/hooks/useLogin";
-import LoginForm from "@/components/auth/LoginForm";
+import { useEffect } from 'react';
+import Link from 'next/link';
+import { useLogin } from '@/hooks/useLogin';
+import LoginForm from '@/components/auth/LoginForm';
 
 const LoginPage = () => {
+  const pageTitle = 'Login - DINCT';
   const { error, login, loading, setError } = useLogin();
+
+  useEffect(() => {
+    document.title = pageTitle;
+  }, [document.title]);
 
   return (
     <div className="min-h-screen flex items-center bg-gray-100 justify-center p-4">

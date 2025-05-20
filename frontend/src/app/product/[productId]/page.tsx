@@ -26,6 +26,10 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
   const isOwner = data?.user?.id === user?.id;
 
   useEffect(() => {
+    document.title = `${data?.name} - DINCT`;
+  }, [document.title, data]);
+
+  useEffect(() => {
     if (data?.imageUrls && data.imageUrls.length > 0) {
       console.log(data.imageUrls);
       setCurrentImg(data.imageUrls[0]);
