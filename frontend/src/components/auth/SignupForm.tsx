@@ -16,6 +16,7 @@ import { SignupFormValues, signupSchema } from "@/schemas/authSchemas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import GoogleAuth from "./GoogleAuth";
+import { Spinner } from "../ui/spinner";
 
 type SignupFormProps = {
   signup: (data: SignupFormValues) => Promise<boolean>;
@@ -87,12 +88,16 @@ const SignupForm = ({ signup, loading, setError }: SignupFormProps) => {
 
           <Button
             type="submit"
-            className="w-full"
+            className="w-full h-10 flex items-center justify-center"
             disabled={loading}
           >
-            Sign up
-            {loading && (
-              <span className="ml-2 spinner-border animate-spin">⟳</span>
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <Spinner size={'small'} className="text-white" />
+                <span className="ml-2">Sign up</span>
+              </div>
+            ) : (
+              "Sign up"
             )}
           </Button>
 
