@@ -1,10 +1,16 @@
 'use client';
-import { SearchProvider } from '@/context/SearchContext';
 import SearchSidebar from '@/components/SearchSidebar';
 import HomeSkeleton from '@/components/home-skeleton';
 import ProductList from '@/components/product/product-list';
+import { useSearchParams } from 'next/navigation';
+import { useDebounce } from 'use-debounce';
 
 const Home = () => {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
+  const searchCategory = searchParams.get('category') || '';
+  const [debouncedHandleSearch] = useDebounce(searchQuery, 1000);
+
   const productSkeleton = true;
 
   if (!productSkeleton) {
@@ -12,10 +18,8 @@ const Home = () => {
   }
   return (
     <div className="md:flex w-full">
-      <SearchProvider>
-        <SearchSidebar />
-        <ProductList />
-      </SearchProvider>
+      <SearchSidebar />
+      <ProductList category={searchCategory} search={debouncedHandleSearch} />
     </div>
   );
 };

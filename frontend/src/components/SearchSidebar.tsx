@@ -1,7 +1,5 @@
 'use client';
-import { useSearchContext } from '@/context/SearchContext';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { CATEGORIES } from '@/constants/categories';
 import { titleToSlug } from '@/lib/utils';
 import { SearchIcon } from 'lucide-react';
@@ -13,45 +11,22 @@ const SearchSidebar = () => {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const categoryQuery = searchParams.get('category') || '';
-  const { searchValue, setSearchValue, selectedCategory, handleCategory } =
-    useSearchContext();
 
-  useEffect(() => {
-    setSearchValue(searchQuery);
-  }, [searchQuery, setSearchValue]);
-
-  useEffect(() => {
-    if (categoryQuery) {
-      handleCategory(categoryQuery);
-    }
-  }, [categoryQuery]);
-
-  const handleChange = (
-    param: string,
-    e: React.ChangeEvent<HTMLInputElement> | string,
-  ) => {
-    const value = typeof e === 'string' ? (e as string) : e.target.value.trim();
+  const handleQueryParam = (param: string, value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-
+    if (param !== 'category') {
+      current.set(param, value);
+    }
     if (param === 'category') {
-      if (value === titleToSlug(selectedCategory)) {
+      if (titleToSlug(categoryQuery) === titleToSlug(value)) {
         current.delete('category');
       } else {
-        current.set(param, value);
-      }
-    } else {
-      if (!value) {
-        current.delete(param);
-      } else {
-        current.set(param, value);
+        current.set(param, titleToSlug(value));
       }
     }
-
     const qString = current.toString();
     const query = qString ? `?${qString}` : '';
-
     router.replace(`/${query}`);
-    return;
   };
 
   return (
@@ -59,12 +34,11 @@ const SearchSidebar = () => {
       <div className="flex justify-between gap-1 mt-4 md:mt-0">
         <Input
           placeholder="Search..."
-          value={searchValue}
+          value={searchQuery}
           className="p-4"
           name="search"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearchValue(e.target.value);
-            handleChange('search', e);
+            handleQueryParam('search', e.target.value);
           }}
         />
         <Button size={'icon'} variant={'secondary'}>
@@ -86,10 +60,11 @@ const SearchSidebar = () => {
                   : 'secondary'
               }
               size={'sm'}
-              className={'first-of-type:m-0 mx-1.5'}
+              className={
+                'first-of-type:m-0 mx-1.5 md:mb-1.5 md:first-of-type:mx-1.5'
+              }
               onClick={() => {
-                handleCategory(titleToSlug(cate));
-                handleChange('category', titleToSlug(cate));
+                handleQueryParam('category', cate);
               }}
             >
               {cate}

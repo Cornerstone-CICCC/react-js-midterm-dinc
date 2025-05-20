@@ -1,9 +1,8 @@
 'use client';
-
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import { User } from '@/types/user';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ProductList from '@/components/product/product-list';
 import { Product } from '@/types/product';
@@ -14,13 +13,11 @@ interface ProfileUIProps {
   products: Product[];
 }
 
-const ProfileUI = ({ user, isOwnProfile, products }: ProfileUIProps) => {
+const ProfileUI = ({ user, isOwnProfile }: ProfileUIProps) => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 150;
   const mobileMaxLength = 50;
-
-  console.log(user);
 
   const handleEditProfile = () => {
     router.push(`/profile/edit`);
@@ -98,7 +95,7 @@ const ProfileUI = ({ user, isOwnProfile, products }: ProfileUIProps) => {
 
       {/* Product List Section */}
       <div className="mx-auto py-0 lg:py-8">
-        <ProductList products={products} />
+        <ProductList userId={user.id} />
       </div>
     </div>
   );

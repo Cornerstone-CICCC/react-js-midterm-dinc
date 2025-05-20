@@ -1,37 +1,34 @@
 import ProductCard from './product-card';
 import { Product } from '@/types/product';
 import { cn, titleToSlug } from '@/lib/utils';
-import { useSearchContext } from '@/context/SearchContext';
-import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useDebounce } from 'use-debounce';
 import { Spinner } from '../ui/spinner';
 
-const ProductList = () => {
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get('search') || '';
-  const searchCategory = searchParams.get('category') || '';
-  const { searchValue, setSearch, selectedCategory, handleCategory } =
-    useSearchContext();
+interface ProductListProps {
+  userId?: string;
+  search?: string;
+  category?: string;
+}
+
+const ProductList = ({ userId, search, category }: ProductListProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit] = useState(20);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [initialFetched, setInitialFetched] = useState(false);
-  const [debouncedHandleSearch] = useDebounce(searchQuery, 500);
-  const [ref, inView, entry] = useInView({
+  const [ref, inView] = useInView({
     threshold: 0,
   });
 
   const fetchProducts = async (search?: string, category?: string) => {
     try {
+      let query = `?search=${search}&category=${category}&page=${page}&limit=${limit}`;
+      if (userId) query += `&userId=${userId}`;
       const req = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/search?search=${search}&category=${titleToSlug(category || '')}&page=${
-          page
-        }&limit=${limit}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/search${query}`,
       );
       const res = await req.json();
       const data = res.data;
@@ -45,18 +42,8 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    if (searchQuery && !searchValue.length) {
-      setSearch(searchQuery);
-    }
-
-    if (searchCategory && !selectedCategory.length) {
-      handleCategory(titleToSlug(searchCategory));
-    }
-  }, []);
-
-  useEffect(() => {
     if (loading) return;
-    if (inView && page <= totalPages) {
+    if (inView && !loading && page <= totalPages) {
       setLoading(true);
       setPage((prev) => (prev += 1));
       setLoading(false);
@@ -72,24 +59,32 @@ const ProductList = () => {
     setLoading(true);
     if (initialFetched) {
       setTimeout(async () => {
-        await fetchProducts(
-          searchValue ? searchValue : searchQuery,
-          selectedCategory ? selectedCategory : searchCategory,
-        );
+        await fetchProducts(search, category);
         setLoading(false);
       }, 100);
     }
-  }, [debouncedHandleSearch, searchCategory]);
+  }, [search, category]);
 
   useEffect(() => {
-    setTimeout(async () => {
+    let isCancelled = false;
+
+    const fetch = async () => {
+      setLoading(true);
       await fetchProducts(
-        searchValue ? searchValue : searchQuery,
-        selectedCategory ? selectedCategory : searchCategory,
+        search ? search : '',
+        category ? titleToSlug(category) : '',
       );
-      setLoading(false);
-      if (!initialFetched) setInitialFetched(true);
-    }, 100);
+      if (!isCancelled) {
+        setLoading(false);
+        if (!initialFetched) setInitialFetched(true);
+      }
+    };
+
+    fetch();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [page]);
 
   return (
