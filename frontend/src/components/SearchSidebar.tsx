@@ -30,7 +30,7 @@ const SearchSidebar = () => {
   };
 
   return (
-    <div className="px-4 z-100 bg-white sticky top-0 pt-1 h-36 md:h-2/3 md:max-w-72 md:top-16 md:w-full transition">
+    <div className="px-4 z-100 sticky top-0 pt-1 h-36 md:h-2/3 md:max-w-72 md:top-16 md:w-full transition">
       <div className="flex justify-between gap-1 mt-4 md:mt-0">
         <Input
           placeholder="Search..."

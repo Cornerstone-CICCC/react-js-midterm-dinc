@@ -92,7 +92,7 @@ const ProfileUI = ({ user, isOwnProfile }: ProfileUIProps) => {
       </div>
 
       {/* Product List Section */}
-      <div className="mx-auto py-0 lg:py-8">
+      <div className="mx-auto py-2 lg:py-8">
         <ProductList
           userId={user.id}
           noResultsText={

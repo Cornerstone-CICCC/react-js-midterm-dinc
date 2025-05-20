@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 
 const EditWorkPage = () => {
   return (
-    <>
+    <div className="px-4">
       <ProductFormEdit />
-    </>
+    </div>
   );
 };
 

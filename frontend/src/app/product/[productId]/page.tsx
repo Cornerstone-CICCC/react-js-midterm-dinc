@@ -78,7 +78,7 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
                 />
               )}
             </div>
-            <div className="flex gap-3 justify-end w-[400px] md:w-[500px] mx-auto">
+            <div className="flex gap-3 justify-end w-[300px] sm:w-[400px] md:w-[500px] mx-auto">
               {data.imageUrls?.map((url, i) => (
                 <button
                   key={i}
