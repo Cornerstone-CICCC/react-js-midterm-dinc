@@ -1,10 +1,10 @@
-import ProductForm from '@/components/work/product-form';
+import { ProductFormCreate } from '@/components/work/product-form-create';
 
 const CreateWorkPage = () => {
   return (
-    <div>
-      <ProductForm />
-    </div>
+    <>
+      <ProductFormCreate />
+    </>
   );
 };
 

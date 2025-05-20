@@ -1,7 +1,7 @@
 'use client';
 
 import Inputpair from '@/components/payment/Inputpair';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -12,15 +12,19 @@ import {
 } from '@/components/ui/card';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import useProductStore from '@/stores/useProductStore';
 
 const PaymentPage = () => {
   const router = useRouter();
+  const { product } = useProductStore();
+
   const handleSubmitPayment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     router.push('/payment/complete');
   };
+
   return (
-    <div className="p-20">
+    <div className="p-4 pb-20 lg:p-20">
       <div className="items-start space-y-5 lg:grid lg:grid-cols-6 lg:space-x-4">
         <div className="col-span-4 lg:px-4">
           <div className="border-t-2 border-black">
@@ -29,23 +33,27 @@ const PaymentPage = () => {
                 <div className="w-full flex items-center space-x-4">
                   <Avatar>
                     <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
+                      src={product?.user.fileId || '/default-profile.png'}
+                      alt={product?.user.name}
                     />
-                    <AvatarFallback>S</AvatarFallback>
                   </Avatar>
-                  <p className="truncate font-semibold">Seller name</p>
+                  <p className="truncate font-semibold">{product?.user.name}</p>
                 </div>
               </div>
               <div className="flex justify-start items-start gap-4">
                 <div className="size-30 shrink-0 bg-gray-200 overflow-hidden relative">
-                  <Image src="/tmp.png" alt="" className="object-cover" fill />
+                  <Image
+                    src={product?.imageUrls[0] || '/tmp.png'}
+                    alt={product?.name || 'Product image'}
+                    className="object-cover"
+                    fill
+                  />
                 </div>
                 <div className="flex flex-col space-y-2">
                   <p className="text-md truncate text-muted-foreground">
-                    ModernModern Modern Modern Wooden Coffee Table
+                    {product?.name}
                   </p>
-                  <span className="font-bold text-lg">$140.00</span>
+                  <span className="font-bold text-lg">${product?.price}</span>
                 </div>
               </div>
             </div>
