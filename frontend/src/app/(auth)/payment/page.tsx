@@ -24,7 +24,7 @@ const PaymentPage = () => {
   };
 
   return (
-    <div className="p-20">
+    <div className="p-4 pb-20 lg:p-20">
       <div className="items-start space-y-5 lg:grid lg:grid-cols-6 lg:space-x-4">
         <div className="col-span-4 lg:px-4">
           <div className="border-t-2 border-black">
