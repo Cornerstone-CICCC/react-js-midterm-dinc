@@ -48,7 +48,7 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
       <div className="flex flex-col gap-10 lg:flex-row">
         <div className="">
           <div className="space-y-3">
-            <div className="h-[400px] w-[400px] md:h-[500px] md:w-[500px] relative mx-auto">
+            <div className="h-[300px] w-[300px] sm:h-[400px] sm:w-[400px] md:h-[500px] md:w-[500px] relative mx-auto bg-zinc-100">
               {currentImg && (
                 <Image
                   src={currentImg}
@@ -81,7 +81,7 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
             </div>
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
           <h2 className="text-4xl font-bold">{data.name}</h2>
           <div className="flex gap-2">
             <Badge variant={'outline'}>{slugToTitle(data.categorySlug)}</Badge>
