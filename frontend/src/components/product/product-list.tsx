@@ -33,7 +33,11 @@ const ProductList = ({ userId, search, category }: ProductListProps) => {
       const res = await req.json();
       const data = res.data;
       const newPagintaion = res.pagination;
-      setProducts((prev) => [...prev, ...data]);
+      if (page === 1) {
+        setProducts(data);
+      } else {
+        setProducts((prev) => [...prev, ...data]);
+      }
       setTotal(newPagintaion.total);
       setTotalPages(Math.ceil(newPagintaion.total / limit));
     } catch (error) {
