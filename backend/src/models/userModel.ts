@@ -14,8 +14,16 @@ const userSchema = new Schema<IUser>(
     lastLogin: { type: Date, default: null },
     isLoggedIn: { type: Boolean, default: false },
   },
-  { timestamps: true, versionKey: false }
-);
+  { timestamps: true, versionKey: false },
+).set('toJSON', {
+  transform: (doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 userSchema.pre<IUser>('save', async function (next) {
   if (!this.isModified('password')) return next();

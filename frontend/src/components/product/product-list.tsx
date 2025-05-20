@@ -25,10 +25,16 @@ const ProductList = ({ userId, search, category }: ProductListProps) => {
 
   const fetchProducts = async (search?: string, category?: string) => {
     try {
-      let query = `?search=${search}&category=${category}&page=${page}&limit=${limit}`;
-      if (userId) query += `&userId=${userId}`;
+      const params = new URLSearchParams({
+        search: search || '',
+        category: category || '',
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+      if (userId) params.append('userId', userId);
+
       const req = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/search${query}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/search${params.toString() ? '?' + params.toString() : ''}`,
       );
       const res = await req.json();
       const data = res.data;
