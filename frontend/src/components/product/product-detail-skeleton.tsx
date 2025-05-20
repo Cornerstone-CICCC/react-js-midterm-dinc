@@ -2,7 +2,7 @@ import { Skeleton } from '../ui/skeleton';
 
 const ProductSkeleton = () => {
   return (
-    <div className="p-5 md:p-20">
+    <div className="p-5 md:p-15">
       <div className="flex flex-col gap-10 lg:flex-row">
         <div className="">
           {/** Product images Skeleton */}

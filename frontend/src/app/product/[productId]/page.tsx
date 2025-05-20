@@ -11,6 +11,7 @@ import { useState, useEffect, use } from 'react';
 import { useWork } from '@/hooks/useWork';
 import useUserStore from '@/stores/useUserStore';
 import { slugToTitle } from '@/lib/utils';
+import ProductSkeleton from '@/components/product/product-detail-skeleton';
 
 type PageParams = {
   productId: string;
@@ -36,15 +37,30 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
   };
 
   if (isFetching) {
-    return <div>Loading...</div>;
+    return <ProductSkeleton />;
   }
 
   if (error || !data) {
     return <div>Error: {error?.message || 'Failed to load product'}</div>;
   }
 
+  const target = new Date(data.updatedAt).getTime();
+  const today = Date.now();
+  const diff = Math.floor(today - target);
+
+  const diffInMinutes = Math.floor(diff / (1000 * 60));
+  const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  const listedDate =
+    diffInMinutes < 60
+      ? `${diffInMinutes} minutes ago`
+      : diffInHours < 24
+        ? `${diffInHours} hours ago`
+        : `${diffInDays} days ago`;
+
   return (
-    <div className="p-5 md:p-20">
+    <div className="p-5 md:p-15">
       <div className="flex flex-col gap-10 lg:flex-row">
         <div className="">
           <div className="space-y-3">
@@ -89,8 +105,13 @@ const ProductDetail = ({ params }: { params: Promise<PageParams> }) => {
           <div className="space-y-1">
             <div className="text-2xl font-bold">$ {data.price}</div>
             <div className="text-sm text-muted-foreground flex items-center">
-              <span>{data.user?.location}</span>
+              <span>
+                {data.user?.location
+                  ? data.user.location
+                  : 'No location provided'}
+              </span>
               <DotIcon />
+              <span>Listed {listedDate}</span>
             </div>
           </div>
           <div className="space-y-4 mt-8 p-4 bg-zinc-50 rounded-sm">
