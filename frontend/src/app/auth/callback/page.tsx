@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { useGoogleAuth } from '@/hooks/useGoogleAuth';\
+import { useGoogleAuth } from '@/hooks/useGoogleAuth';
 import { Spinner } from '@/components/ui/spinner';
 
 export default function AuthCallback() {
